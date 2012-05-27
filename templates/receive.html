@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block style %}
+<style type="text/css">
+table { width:100%; }
+th { width:14%; }
+input { width:100%; }
+.step_2 { display: none; }
+.step_3 { display: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Receiving</h2>
+
+<p>Steps</p>
+<ol>
+  <li class="step_1">Enter Donor Name and Press Enter:<input id="donor-name" type="text" value=""></input></li>
+  <li class="step_2">Enter Date Received and Press Enter:<input id="date-received" type="text" value=""></input></li>
+  <li class="step_3">Start Scanning</li>
+</ol>
+
+<table class="step_3" border="1" cellspacing="1" cellpadding="5" style="width:100%;">
+  <thead>
+    <tr>
+      <th>Code</th>
+      <th>Name</th>
+      <th>Donor</th>
+      <th>Expires</th>
+      <th>Received</th>
+      <th>Category</th>
+      <th>Subcategory</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td id="new-code" class="new-item">
+        <input id="new-code-in" type="text" name="new-code" value=""></input>
+      </td>
+      <td id="new-name" class="new-item">
+        <input id="new-name-in" type="text" name="new-name" value=""></input>
+      </td>
+      <td id="new-donor" class="new-item">
+        <input id="new-donor-in" type="text" name="new-donor" value=""></input>
+      </td>
+      <td id="new-expire_year" class="new-item">
+        <input id="new-expire_year-in" type="text" name="new-expire_year" value=""></input>
+      </td>
+      <td id="new-acquire_date" class="new-item">
+        <input id="new-acquire_date-in" type="text" name="new-acquire_date" value=""></input>
+      </td>
+      <td id="new-category" class="new-item">
+        <input id="new-category-in" type="text" name="new-category" value=""></input>
+      </td>
+      <td id="new-subcategory" class="new-item">
+        <input id="new-subcategory-in" type="text" name="new-subcategory" value=""></input>
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript" src="/static/jquery-1.7.2.js"></script>
+
+<script type="text/javascript">
+function get_date_formatted() {
+  date = new Date();
+  month = { 0:"Jan", 1:"Feb", 2:"Mar", 3:"Apr", 4:"May", 5:"Jun", 6:"Jul",
+            7:"Aug", 8:"Sep", 9:"Oct", 10:"Nov", 11:"Dec" }[date.getMonth()];
+  date_format = month + " " + date.getDate() + ", " + date.getFullYear();
+  return date_format;
+}
+function td_click() {
+  $(this).unbind();
+  $(this).wrapInner("<input type='text' value='"+$(this).html()+"'></input>");
+  $(this).bind("keypress", td_enter);
+}
+function td_enter(obj) {
+  if (obj.which == 13) {
+    td = $(this);
+    td.unbind();
+    var cls = td.attr("class");
+    if (cls.indexOf("new-") == 0) {
+      var item = {
+        code: $("#new-code-in").val(),
+        name: $("#new-name-in").val(),
+        donor: $("#new-donor-in").val(),
+        expire_year: $("#new-expire_year-in").val(),
+        acquire_date: $("#new-acquire_date-in").val(),
+        category: $("#new-category-in").val(),
+        subcategory: $("#new-subcategory-in").val()
+      };
+      $.ajax({
+        url: "/inventory/new",
+        data: item,
+        type: "POST",
+        async: false,
+        dataType: "json",
+        cache: false,
+        statusCode: {
+          400: function() {
+            alert("Error: Bad input.");
+          },
+          200: function(item) {
+            id = item["num"]
+            var row =  "<tr>"
+              + "<td id=\"" + id + "-code\" class=\"item-" + id + "\">" + item["code"] + "</td>"
+              + "<td id=\"" + id + "-name\" class=\"item-" + id + "\">" + item["name"] + "</td>"
+              + "<td id=\"" + id + "-donor\" class=\"item-" + id + "\">" + item["donor"] + "</td>"
+              + "<td id=\"" + id + "-expire_year\" class=\"item-" + id + "\">" + item["expire_year"] + "</td>"
+              + "<td id=\"" + id + "-acquire_date\" class=\"item-" + id + "\">" + item["acquire_date"] + "</td>"
+              + "<td id=\"" + id + "-category\" class=\"item-" + id + "\">" + item["category"] + "</td>"
+              + "<td id=\"" + id + "-subcategory\" class=\"item-" + id + "\">" + item["subcategory"] + "</td>"
+              + "</tr>";
+            td.parent().after(row);
+            $(".item-" + id).click(td_click);
+            $("#new-code-in").val("");
+            $("#new-name-in").val("");
+            $("#new-expire_year-in").val("");
+            $("#new-category-in").val("");
+            $("#new-subcategory-in").val("");
+            $("#new-code-in").focus();
+          }
+        },
+        error: function(data) {
+          alert("Unknown Error.");
+        }
+      });
+      td.bind("keypress", td_enter);
+    } else {
+      $(this).text($(this).children().val());
+      $(this).click(td_click);
+    }
+  }
+}
+function step_1(obj) {
+  if (obj.which == 13) {
+    $(".step_2").fadeIn();
+    $("#date-received").val(get_date_formatted());
+    $("#date-received").focus();
+    $(".step_2").keypress(step_2);
+    $("#new-donor-in").val($("#donor-name").val());
+  }
+}
+function step_2(obj) {
+  if (obj.which == 13) {
+    $(".step_3").fadeIn();
+    $(".new-item").keypress(td_enter);
+    $("#new-code-in").focus();
+    $("#new-acquire_date-in").val($("#date-received").val());
+  }
+}
+$(document).ready(function() {
+  $("#donor-name").focus();
+  $(".step_1").keypress(step_1);
+});
+</script>
+{% endblock %}

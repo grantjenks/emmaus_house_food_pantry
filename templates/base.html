@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Emmaus House Food Pantry</title>
+  {% block style %}{% endblock %}
+</head>
+<body>
+  <h1>Emmaus House Food Pantry</h1>
+  <p>Navigation</p>
+  <ul>
+    <li><a href="{% url views.inventory 1 %}">Inventory</a></li>
+    <li><a href="{% url views.receive %}">Receive</a></li>
+    <li><a href="{% url views.distribute %}">Distribute</a></li>
+  </ul>
+  {% block content %}{% endblock %}
+  {% block script %}{% endblock %}
+</body>
+</html>

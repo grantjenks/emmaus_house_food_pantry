@@ -1,0 +1,3 @@
+* Todos
+  - Don't cache ajax requests
+  - Ajax requests should be blocking?
