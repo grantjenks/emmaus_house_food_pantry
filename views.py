@@ -9,6 +9,26 @@ from django.shortcuts import render_to_response
 from datetime import datetime
 import json
 
+def lookup_label(request):
+    if request.method != 'GET':
+        return HttpResponseBadRequest()
+
+    code = request.GET.get('code')
+
+    if code is None: return HttpResponseBadRequest()
+
+    result = dict(name='', category='', subcategory='')
+
+    try:
+        label = Label.objects.get(code=code)
+        result['name'] = label.name
+        result['category'] = label.category
+        result['subcategory'] = label.subcategory
+    except Label.DoesNotExist:
+        pass
+
+    return HttpResponse(json.dumps(result))
+
 def item_new(request):
     if request.method != 'POST':
         return HttpResponseBadRequest()
