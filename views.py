@@ -119,6 +119,6 @@ def receiving(request):
     return render_to_response('receiving.html', {},
                               context_instance=RequestContext(request))
 
-def distribute(request):
-    return render_to_response('dispense.html', {},
+def distribution(request):
+    return render_to_response('distribution.html', {},
                               context_instance=RequestContext(request))
