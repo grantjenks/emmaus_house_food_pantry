@@ -10,7 +10,6 @@ input { width:100%; }
 .step_4 { display: none; }
 .step_5 { display: none; }
 .step_6 { display: none; }
-.step_7 { display: none; }
 ol { height: 320px; }
 </style>
 {% endblock %}
@@ -26,7 +25,6 @@ ol { height: 320px; }
   <li class="step_4">Enter Item Name and Press Enter:<input id="item-name" type="text" value=""></input></li>
   <li class="step_5">Enter Item Category and Press Enter:<input id="item-category" type="text" value=""></input></li>
   <li class="step_6">Enter Item Subcategory and Press Enter:<input id="item-subcategory" type="text" value=""></input></li>
-  <li class="step_7">Enter Expiration Year and Press Enter:<input id="item-expire_year" type="text" value=""></input></li>
 </ol>
 
 <table class="step_3" border="1" cellspacing="1" cellpadding="5" style="width:100%;">
@@ -35,7 +33,6 @@ ol { height: 320px; }
       <th>Code</th>
       <th>Name</th>
       <th>Donor</th>
-      <th>Expires</th>
       <th>Received</th>
       <th>Category</th>
       <th>Subcategory</th>
@@ -51,9 +48,6 @@ ol { height: 320px; }
       </td>
       <td id="new-donor" class="new-item">
         <input id="new-donor-in" type="text" name="new-donor" value=""></input>
-      </td>
-      <td id="new-expire_year" class="new-item">
-        <input id="new-expire_year-in" type="text" name="new-expire_year" value=""></input>
       </td>
       <td id="new-acquire_date" class="new-item">
         <input id="new-acquire_date-in" type="text" name="new-acquire_date" value=""></input>
@@ -90,7 +84,6 @@ function new_item() {
     code: $("#new-code-in").val(),
     name: $("#new-name-in").val(),
     donor: $("#new-donor-in").val(),
-    expire_year: $("#new-expire_year-in").val(),
     acquire_date: $("#new-acquire_date-in").val(),
     category: $("#new-category-in").val(),
     subcategory: $("#new-subcategory-in").val()
@@ -103,16 +96,12 @@ function new_item() {
     dataType: "json",
     cache: false,
     statusCode: {
-      400: function() {
-        alert("Error: Bad input.");
-      },
       200: function(item) {
         id = item["num"]
         var row =  "<tr>"
           + "<td id=\"" + id + "-code\" class=\"item-" + id + "\">" + item["code"] + "</td>"
           + "<td id=\"" + id + "-name\" class=\"item-" + id + "\">" + item["name"] + "</td>"
           + "<td id=\"" + id + "-donor\" class=\"item-" + id + "\">" + item["donor"] + "</td>"
-          + "<td id=\"" + id + "-expire_year\" class=\"item-" + id + "\">" + item["expire_year"] + "</td>"
           + "<td id=\"" + id + "-acquire_date\" class=\"item-" + id + "\">" + item["acquire_date"] + "</td>"
           + "<td id=\"" + id + "-category\" class=\"item-" + id + "\">" + item["category"] + "</td>"
           + "<td id=\"" + id + "-subcategory\" class=\"item-" + id + "\">" + item["subcategory"] + "</td>"
@@ -121,18 +110,17 @@ function new_item() {
         $(".item-" + id).click(td_click);
         $("#new-code-in").val("");
         $("#new-name-in").val("");
-        $("#new-expire_year-in").val("");
         $("#new-category-in").val("");
         $("#new-subcategory-in").val("");
         $("#new-code-in").focus();
       }
     },
     error: function(data) {
-      alert("Unknown Error.");
+      alert(data);
+      alert("Error: " + data["message"]);
     }
   });
 }
-
 function td_enter(obj) {
   if (obj.which == 13) {
     td = $(this);
@@ -142,8 +130,30 @@ function td_enter(obj) {
       new_item();
       td.bind("keypress", td_enter);
     } else {
-      $(this).text($(this).children().val());
-      $(this).click(td_click);
+      id = $(this).attr("id");
+      parts = id.split("-");
+      val = $(this).children().val();
+      $.ajax({
+        url: "/inventory/update",
+        data: { num: parts[0], field: parts[1], value: val },
+        type: "POST",
+        async: false,
+        cache: false,
+        statusCode: {
+          400: function() {
+            alert("Error: Bad input.");
+            td.bind("keypress", td_enter);
+          },
+          200: function() {
+            td.text(val);
+            td.bind("click", td_click);
+          }
+        },
+        error: function() {
+          alert("Unknown Error.");
+          td.bind("keypress", td_enter);
+        }
+      });
     }
   }
 }
@@ -178,19 +188,24 @@ function step_3(obj) {
           $("#item-name").val(label["name"]);
           $("#item-category").val(label["category"]);
           $("#item-subcategory").val(label["subcategory"]);
-          $(".step_4").fadeIn();
-          $("#item-name").focus();
-          if (label["name"] != "") {
-            $(".step_5").fadeIn();
-            $("#item-category").focus();
-          }
-          if (label["category"] != "") {
-            $(".step_6").fadeIn();
-            $("#item-subcategory").focus();
-          }
-          if (label["subcategory"] != "") {
-            $(".step_7").fadeIn();
-            $("#item-expire_year").focus();
+
+          if (label["name"] != ""
+              && label["category"] != ""
+              && label["subcategory"] != "") {
+            step_6_helper();
+          } else {
+            $(".step_4").fadeIn();
+            $("#item-name").focus();
+
+            if (label["name"] != "") {
+              $(".step_5").fadeIn();
+              $("#item-category").focus();
+            }
+
+            if (label["category"] != "") {
+              $(".step_6").fadeIn();
+              $("#item-subcategory").focus();
+            }
           }
         }
       },
@@ -212,35 +227,36 @@ function step_5(obj) {
     $("#item-subcategory").focus();
   }
 }
+function step_6_helper() {
+  $("#new-donor-in").val($("#item-donor").val());
+  $("#new-acquire_date-in").val($("#item-receive_date").val());
+  $("#new-code-in").val($("#item-code").val());
+  $("#new-name-in").val($("#item-name").val());
+  $("#new-category-in").val($("#item-category").val());
+  $("#new-subcategory-in").val($("#item-subcategory").val());
+
+  new_item();
+
+  // TODO: Error handling?
+
+  $("#new-donor-in").val("");
+  $("#new-acquire_date-in").val("");
+
+  $(".step_6").fadeOut();
+  $("#item-subcategory").val("");
+
+  $(".step_5").fadeOut();
+  $("#item-category").val("");
+
+  $(".step_4").fadeOut();
+  $("#item-name").val("");
+
+  $("#item-code").val("");
+  $("#item-code").focus();
+}
 function step_6(obj) {
   if (obj.which == 13) {
-    $(".step_7").fadeIn();
-    $("#item-expire_year").focus();
-  }
-}
-function step_7(obj) {
-  if (obj.which == 13) {
-    $("#new-donor-in").val($("#item-donor").val());
-    $("#new-acquire_date-in").val($("#item-receive_date").val());
-    $("#new-code-in").val($("#item-code").val());
-    $("#new-name-in").val($("#item-name").val());
-    $("#new-category-in").val($("#item-category").val());
-    $("#new-subcategory-in").val($("#item-subcategory").val());
-    $("#new-expire_year-in").val($("#item-expire_year").val());
-    new_item();
-    // Error handling?
-    $("#new-donor-in").val("");
-    $("#new-acquire_date-in").val("");
-    $(".step_7").fadeOut();
-    $("#item-expire_year").val("");
-    $(".step_6").fadeOut();
-    $("#item-subcategory").val("");
-    $(".step_5").fadeOut();
-    $("#item-category").val("");
-    $(".step_4").fadeOut();
-    $("#item-name").val("");
-    $("#item-code").val("");
-    $("#item-code").focus();
+    step_6_helper();
   }
 }
 $(document).ready(function() {
@@ -250,7 +266,6 @@ $(document).ready(function() {
   $("#item-name").keypress(step_4);
   $("#item-category").keypress(step_5);
   $("#item-subcategory").keypress(step_6);
-  $("#item-expire_year").keypress(step_7);
   $(".new-item").keypress(td_enter);
   $("#item-donor").focus();
 });

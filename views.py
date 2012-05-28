@@ -36,7 +36,6 @@ def item_new(request):
     code = request.POST.get("code")
     name = request.POST.get("name")
     donor = request.POST.get("donor")
-    expire_year = request.POST.get("expire_year")
     acquire_date = request.POST.get("acquire_date")
     category = request.POST.get("category")
     subcategory = request.POST.get("subcategory")
@@ -54,20 +53,16 @@ def item_new(request):
             Label.objects.create(name=name, code=code, category=category,
                                  subcategory=subcategory)
 
-    if name == '': return HttpResponseBadRequest()
+    if name == '':
+        result = {'message': 'Please enter a name.'}
+        return HttpResponseBadRequest(json.dumps(result))
 
-    if expire_year == '':
-        expire_year = None
-    else:
-        expire_year = int(expire_year)
-        
     if acquire_date:
         acquire_date = datetime.strptime(acquire_date, '%b %d, %Y').date()
     else:
         acquire_date = None
 
     item = Item.objects.create(code=code, name=name, donor=donor,
-                               expire_year=expire_year,
                                acquire_date=acquire_date,
                                release_date=None,
                                category=category, subcategory=subcategory)
@@ -82,16 +77,14 @@ def item_update(request):
     field = request.POST.get("field", None)
     value = request.POST.get("value", None)
 
-    if field not in ('name', 'code', 'donor', 'expire_year', 'acquire_date',
+    if field not in ('name', 'code', 'donor', 'acquire_date',
                      'category', 'subcategory'):
         return HttpResponseBadRequest()
 
     if field == 'name' and value == '': return HttpResponseBadRequest()
 
     try:
-        if field == 'expire_year':
-            value = int(value)
-        elif field == 'acquire_date':
+        if field == 'acquire_date':
             value = datetime.strptime(value, '%b %d, %Y').date()
 
         # TODO: If the name, category or subcategory is modified and

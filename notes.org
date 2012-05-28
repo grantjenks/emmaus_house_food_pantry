@@ -1,3 +1,5 @@
 * Todos
-  - Don't cache ajax requests
-  - Ajax requests should be blocking?
+  - Receipt generation
+  - distribution
+  - Label editing should update the page
+  - Error handling

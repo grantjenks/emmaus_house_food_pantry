@@ -4,7 +4,6 @@ class Item(db.models.Model):
     name = db.models.CharField(max_length=256)
     code = db.models.CharField(blank=True, null=True, max_length=256)
     donor = db.models.CharField(blank=True, null=True, max_length=256)
-    expire_year = db.models.IntegerField(blank=True, null=True)
     acquire_date = db.models.DateField(blank=True, null=True)
     release_date = db.models.DateField(blank=True, null=True)
     category = db.models.CharField(blank=True, max_length=256)
@@ -19,9 +18,8 @@ class Item(db.models.Model):
     def toJson(self):
         acquire_date = self.jsonDate(self.acquire_date)
         release_date = self.jsonDate(self.release_date)
-        expire_year = self.expire_year or ''
         return dict(num=self.id, name=self.name, code=self.code,
-                    donor=self.donor, expire_year=expire_year,
+                    donor=self.donor,
                     acquire_date=acquire_date,
                     release_date=release_date,
                     category=self.category, subcategory=self.subcategory)
