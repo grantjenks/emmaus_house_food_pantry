@@ -1,5 +1,9 @@
 * Todos
-  - Receipt generation
-  - distribution
+  - Receipt linking/formatting/aggregation
+    - Order by subcategory
+  - Category and subcategory are drop-down lists
   - Label editing should update the page
+    - Refactor this mechanism for all pages
   - Error handling
+    - Display message when item added/edited successfully
+  - Receipt: items by donor in a year?

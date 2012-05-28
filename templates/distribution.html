@@ -10,6 +10,24 @@ input { width:100%; }
 
 {% block content %}
 <h2>Distribution</h2>
+<p>Steps</p>
+<ol>
+  <li class="step_1">Scan an Item:<input id="item-code" type="text" value=""></input></li>
+</ol>
+<table class="step_1" border="1" cellspacing="1" cellpadding="5">
+  <thead>
+    <tr>
+      <th>Code</th>
+      <th>Name</th>
+      <th>Donor</th>
+      <th>Distributed</th>
+      <th>Category</th>
+      <th>Subcategory</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
 
 {% endblock %}
 
@@ -17,5 +35,86 @@ input { width:100%; }
 <script type="text/javascript" src="/static/jquery-1.7.2.js"></script>
 
 <script type="text/javascript">
+function get_date_formatted() {
+  date = new Date();
+  month = { 0:"Jan", 1:"Feb", 2:"Mar", 3:"Apr", 4:"May", 5:"Jun", 6:"Jul",
+            7:"Aug", 8:"Sep", 9:"Oct", 10:"Nov", 11:"Dec" }[date.getMonth()];
+  date_format = month + " " + date.getDate() + ", " + date.getFullYear();
+  return date_format;
+}
+function item_code(obj) {
+  if (obj.which == 13) {
+    code = $(this).val();
+    date = get_date_formatted();
+    $.ajax({
+      url: "/inventory/release",
+      data: { "code": code },
+      type: "POST",
+      async: false,
+      dataType: "json",
+      cache: false,
+      statusCode: {
+        400: function() {
+          alert("Error: Bad input.");
+        },
+        200: function(item) {
+          var row =  "<tr>"
+            + "<td>" + item["code"] + "</td>"
+            + "<td>" + item["name"] + "</td>"
+            + "<td>" + item["donor"] + "</td>"
+            + "<td>" + item["release_date"] + "</td>"
+            + "<td>" + item["category"] + "</td>"
+            + "<td>" + item["subcategory"] + "</td>"
+            + "</tr>";
+          $("tbody").prepend(row);
+        }
+      },
+      error: function() {
+        alert("Unknown Error.");
+      }
+    });
+    $("#item-code").val("");
+  }
+}
+function td_click() {
+  $(this).unbind();
+  $(this).wrapInner("<input type='text' name='"+$(this).attr("rel")+"' value='"+$(this).html()+"'></input>");
+  $(this).bind("keypress", td_enter);
+}
+function td_enter(obj) {
+  if (obj.which == 13) {
+    $(this).unbind();
+    td = $(this);
+    id = $(this).attr("id");
+    parts = id.split("-");
+    val = $(this).children().val();
+    $.ajax({
+      url: "/inventory/update",
+      data: { num: parts[0], field: parts[1], value: val },
+      type: "POST",
+      async: false,
+      cache: false,
+      statusCode: {
+        400: function() {
+          alert("Error: Bad input.");
+          td.bind("keypress", td_enter);
+        },
+        200: function() {
+          td.text(val);
+          td.bind("click", td_click);
+        }
+      },
+      error: function() {
+        alert("Unknown Error.");
+        td.bind("keypress", td_enter);
+      }
+    });
+  }
+}
+$(document).ready(function() {
+  $("td").click(td_click);
+  $("#item-code").focus();
+  $("#item-code").keypress(item_code);
+});
 </script>
 {% endblock %}

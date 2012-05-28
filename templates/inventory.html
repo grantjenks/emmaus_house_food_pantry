@@ -49,42 +49,42 @@ input { width:100%; }
 <script type="text/javascript" src="/static/jquery-1.7.2.js"></script>
 
 <script type="text/javascript">
-$(function() {
-  function td_click() {
+function td_click() {
+  $(this).unbind();
+  $(this).wrapInner("<input type='text' name='"+$(this).attr("rel")+"' value='"+$(this).html()+"'></input>");
+  $(this).bind("keypress", td_enter);
+}
+function td_enter(obj) {
+  if (obj.which == 13) {
     $(this).unbind();
-    $(this).wrapInner("<input type='text' name='"+$(this).attr("rel")+"' value='"+$(this).html()+"'></input>");
-    $(this).bind("keypress", td_enter);
-  }
-  function td_enter(obj) {
-    if (obj.which == 13) {
-      $(this).unbind();
-      td = $(this);
-      id = $(this).attr("id");
-      parts = id.split("-");
-      val = $(this).children().val();
-      $.ajax({
-        url: "/inventory/update",
-        data: { num: parts[0], field: parts[1], value: val },
-        type: "POST",
-        async: false,
-        cache: false,
-        statusCode: {
-          400: function() {
-            alert("Error: Bad input.");
-            td.bind("keypress", td_enter);
-          },
-          200: function() {
-            td.text(val);
-            td.bind("click", td_click);
-          }
-        },
-        error: function() {
-          alert("Unknown Error.");
+    td = $(this);
+    id = $(this).attr("id");
+    parts = id.split("-");
+    val = $(this).children().val();
+    $.ajax({
+      url: "/inventory/update",
+      data: { num: parts[0], field: parts[1], value: val },
+      type: "POST",
+      async: false,
+      cache: false,
+      statusCode: {
+        400: function() {
+          alert("Error: Bad input.");
           td.bind("keypress", td_enter);
+        },
+        200: function() {
+          td.text(val);
+          td.bind("click", td_click);
         }
-      });
-    }
+      },
+      error: function() {
+        alert("Unknown Error.");
+        td.bind("keypress", td_enter);
+      }
+    });
   }
+}
+$(document).ready(function() {
   $("td").click(td_click);
 });
 </script>

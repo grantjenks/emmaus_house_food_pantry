@@ -10,7 +10,7 @@ input { width:100%; }
 .step_4 { display: none; }
 .step_5 { display: none; }
 .step_6 { display: none; }
-ol { height: 320px; }
+ol { height: 270px; }
 </style>
 {% endblock %}
 
@@ -20,14 +20,14 @@ ol { height: 320px; }
 <p>Steps</p>
 <ol>
   <li class="step_1">Enter Donor Name and Press Enter:<input id="item-donor" type="text" value=""></input></li>
-  <li class="step_2">Enter Date Received and Press Enter:<input id="item-receive_date" type="text" value=""></input></li>
+  <li class="step_2">Enter Date Received and Press Enter:<input id="item-acquire_date" type="text" value=""></input></li>
   <li class="step_3">Scan an Item:<input id="item-code" type="text" value=""></input></li>
   <li class="step_4">Enter Item Name and Press Enter:<input id="item-name" type="text" value=""></input></li>
   <li class="step_5">Enter Item Category and Press Enter:<input id="item-category" type="text" value=""></input></li>
   <li class="step_6">Enter Item Subcategory and Press Enter:<input id="item-subcategory" type="text" value=""></input></li>
 </ol>
-
-<table class="step_3" border="1" cellspacing="1" cellpadding="5" style="width:100%;">
+<a id="create-receipt" class="step_3" href="{% url views.receipt %}">Create Receipt</a>
+<table class="step_3" border="1" cellspacing="1" cellpadding="5">
   <thead>
     <tr>
       <th>Code</th>
@@ -159,9 +159,9 @@ function td_enter(obj) {
 }
 function step_1(obj) {
   if (obj.which == 13) {
-    $("#item-receive_date").val(get_date_formatted());
+    $("#item-acquire_date").val(get_date_formatted());
     $(".step_2").fadeIn();
-    $("#item-receive_date").focus();
+    $("#item-acquire_date").focus();
   }
 }
 function step_2(obj) {
@@ -229,7 +229,7 @@ function step_5(obj) {
 }
 function step_6_helper() {
   $("#new-donor-in").val($("#item-donor").val());
-  $("#new-acquire_date-in").val($("#item-receive_date").val());
+  $("#new-acquire_date-in").val($("#item-acquire_date").val());
   $("#new-code-in").val($("#item-code").val());
   $("#new-name-in").val($("#item-name").val());
   $("#new-category-in").val($("#item-category").val());
@@ -259,14 +259,18 @@ function step_6(obj) {
     step_6_helper();
   }
 }
+function create_receipt() {
+  $("#create-receipt").attr("href", "/receipt");
+}
 $(document).ready(function() {
   $("#item-donor").keypress(step_1);
-  $("#item-receive_date").keypress(step_2);
+  $("#item-acquire_date").keypress(step_2);
   $("#item-code").keypress(step_3);
   $("#item-name").keypress(step_4);
   $("#item-category").keypress(step_5);
   $("#item-subcategory").keypress(step_6);
   $(".new-item").keypress(td_enter);
+  $("#create-receipt").click(create_receipt);
   $("#item-donor").focus();
 });
 </script>

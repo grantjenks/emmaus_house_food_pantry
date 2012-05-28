@@ -69,6 +69,25 @@ def item_new(request):
 
     return HttpResponse(json.dumps(item.toJson()))
 
+def item_release(request):
+    if request.method != 'POST':
+        return HttpResponseBadRequest()
+
+    code = request.POST.get("code", None)
+
+    if code is None:
+        return HttpResponseBadRequest()
+
+    try:
+        item = Item.objects.filter(code=code, release_date=None)[:1][0]
+        today = datetime.now().date()
+        item.release_date = today
+        item.save()
+        return HttpResponse(json.dumps(item.toJson()))
+    except Exception as ex:
+        print ex
+        return HttpResponseBadRequest()
+
 def item_update(request):
     if request.method != 'POST':
         return HttpResponseBadRequest()
@@ -78,7 +97,7 @@ def item_update(request):
     value = request.POST.get("value", None)
 
     if field not in ('name', 'code', 'donor', 'acquire_date',
-                     'category', 'subcategory'):
+                     'release_date', 'category', 'subcategory'):
         return HttpResponseBadRequest()
 
     if field == 'name' and value == '': return HttpResponseBadRequest()
@@ -96,16 +115,15 @@ def item_update(request):
         item = Item.objects.get(pk=num)
         setattr(item, field, value)
         item.save()
-        return HttpResponse()
+        return HttpResponse(json.dumps(item.toJson()))
     except Exception as ex:
-        print ex
         return HttpResponseBadRequest()
 
 def inventory(request, page=1):
     """List items from inventory."""
 
-    all_items = Item.objects.all()
-    items_paginator = Paginator(all_items, 20)
+    items = Item.objects.filter(release_date=None)
+    items_paginator = Paginator(items, 20)
 
     try:
         items_page = items_paginator.page(page)
@@ -121,4 +139,22 @@ def receiving(request):
 
 def distribution(request):
     return render_to_response('distribution.html', {},
+                              context_instance=RequestContext(request))
+
+def receipt(request):
+    donor = request.GET.get('donor')
+    acquire_date = request.GET.get('acquire_date')
+
+    if donor is None or acquire_date is None:
+        data = {'error': 'Please specify donor and date.'}
+        return render_to_response('receipt.html', data,
+                                  context_instance=RequestContext(request))
+
+    acquire_date = datetime.strptime(acquire_date, '%b %d, %Y').date()
+
+    items = Item.objects.filter(donor=donor, acquire_date=acquire_date)
+
+    # Group by code with quantity.
+
+    return render_to_response('receipt.html', {'items':items},
                               context_instance=RequestContext(request))
