@@ -115,8 +115,8 @@ def inventory(request, page=1):
     return render_to_response('inventory.html', {'items_page':items_page},
                               context_instance=RequestContext(request))
 
-def receive(request):
-    return render_to_response('receive.html', {},
+def receiving(request):
+    return render_to_response('receiving.html', {},
                               context_instance=RequestContext(request))
 
 def distribute(request):
