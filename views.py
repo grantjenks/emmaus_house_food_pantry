@@ -1,4 +1,4 @@
-from models import Item, Label
+from models import Item, Label, update_label
 
 from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.core.paginator import Paginator, EmptyPage
@@ -67,7 +67,7 @@ def item_new(request):
                                release_date=None,
                                category=category, subcategory=subcategory)
 
-    return HttpResponse(json.dumps(item.toJson()))
+    return HttpResponse(json.dumps(item.toJSON()))
 
 def item_release(request):
     if request.method != 'POST':
@@ -83,7 +83,7 @@ def item_release(request):
         today = datetime.now().date()
         item.release_date = today
         item.save()
-        return HttpResponse(json.dumps(item.toJson()))
+        return HttpResponse(json.dumps(item.toJSON()))
     except Exception as ex:
         print ex
         return HttpResponseBadRequest()
@@ -102,22 +102,23 @@ def item_update(request):
 
     if field == 'name' and value == '': return HttpResponseBadRequest()
 
-    try:
-        if field == 'acquire_date':
-            value = datetime.strptime(value, '%b %d, %Y').date()
+    if field == 'acquire_date':
+        value = datetime.strptime(value, '%b %d, %Y').date()
+    num = int(num)
+    item = Item.objects.get(pk=num)
+    setattr(item, field, value)
+    item.save()
 
-        # TODO: If the name, category or subcategory is modified and
-        # code is not None then we need to update all references in the
-        # database.
-        # And we need to update the UI.
+    code = item.code
+    if code is not None and (field == 'name' or field == 'category'
+                             or field == 'subcategory'):
+        update = update_label(code, field, value)
+    else:
+        update = False
 
-        num = int(num)
-        item = Item.objects.get(pk=num)
-        setattr(item, field, value)
-        item.save()
-        return HttpResponse(json.dumps(item.toJson()))
-    except Exception as ex:
-        return HttpResponseBadRequest()
+    result = dict(update=update, item=item.toJSON())
+
+    return HttpResponse(json.dumps(result))
 
 def inventory(request, page=1):
     """List items from inventory."""
