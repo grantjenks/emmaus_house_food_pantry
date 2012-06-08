@@ -14,8 +14,9 @@ class Item(db.models.Model):
     def __repr__(self):
         return self.name
     def jsonDate(self, date):
-        return date if date is None else date.strftime('%b %d, %Y')
-    def toJson(self):
+        if date is None: return None
+        else: return date.strftime('%b {}, %Y').format(date.day)
+    def toJSON(self):
         acquire_date = self.jsonDate(self.acquire_date)
         release_date = self.jsonDate(self.release_date)
         return dict(num=self.id, name=self.name, code=self.code,
@@ -56,3 +57,27 @@ class Label(db.models.Model):
 
     class Meta:
         app_label = 'food_pantry'
+
+def update_label(code, field, value):
+    if field not in ('name', 'category', 'subcategory'):
+        raise ValueError
+
+    label = Label.objects.get(code=code)
+
+    attr_value = getattr(label, field)
+    if attr_value == value: return False
+
+    setattr(label, field, value)
+    label.save()
+
+    items = Item.objects.filter(code=code)
+    update = False
+
+    for item in items:
+        attr_value = getattr(item, field)
+        if attr_value != value:
+            setattr(item, field, value)
+            item.save()
+            update = True
+
+    return update

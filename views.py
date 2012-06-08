@@ -1,10 +1,10 @@
-from models import Item, Label
+from models import Item, Label, update_label
 
 from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.core.paginator import Paginator, EmptyPage
 from django.core.paginator import InvalidPage, PageNotAnInteger
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 
 from datetime import datetime
 import json
@@ -67,7 +67,7 @@ def item_new(request):
                                release_date=None,
                                category=category, subcategory=subcategory)
 
-    return HttpResponse(json.dumps(item.toJson()))
+    return HttpResponse(json.dumps(item.toJSON()))
 
 def item_release(request):
     if request.method != 'POST':
@@ -83,7 +83,7 @@ def item_release(request):
         today = datetime.now().date()
         item.release_date = today
         item.save()
-        return HttpResponse(json.dumps(item.toJson()))
+        return HttpResponse(json.dumps(item.toJSON()))
     except Exception as ex:
         print ex
         return HttpResponseBadRequest()
@@ -96,28 +96,41 @@ def item_update(request):
     field = request.POST.get("field", None)
     value = request.POST.get("value", None)
 
-    if field not in ('name', 'code', 'donor', 'acquire_date',
+    if field not in ('name', 'code', 'donor', 'acquire_date', 'release_date',
                      'release_date', 'category', 'subcategory'):
         return HttpResponseBadRequest()
 
     if field == 'name' and value == '': return HttpResponseBadRequest()
 
-    try:
-        if field == 'acquire_date':
-            value = datetime.strptime(value, '%b %d, %Y').date()
+    if field in ('acquire_date', 'release_date'):
+        value = datetime.strptime(value, '%b %d, %Y').date()
 
-        # TODO: If the name, category or subcategory is modified and
-        # code is not None then we need to update all references in the
-        # database.
-        # And we need to update the UI.
+    num = int(num)
+    item = get_object_or_404(Item, pk=num)
+    setattr(item, field, value)
 
-        num = int(num)
-        item = Item.objects.get(pk=num)
-        setattr(item, field, value)
-        item.save()
-        return HttpResponse(json.dumps(item.toJson()))
-    except Exception as ex:
-        return HttpResponseBadRequest()
+    if field == 'code':
+        try:
+            label = Label.objects.get(code=value)
+            item.name = label.name
+            item.category = label.category
+            item.subcategory = label.subcategory
+        except Label.DoesNotExist:
+            Label.objects.create(name=item.name, code=value,
+                                 category=item.category,
+                                 subcategory=item.subcategory)
+
+    item.save()
+
+    code = item.code
+    if code is not None and field in ('name', 'category', 'subcategory'):
+        update = update_label(code, field, value)
+    else:
+        update = False
+
+    result = dict(update=update, item=item.toJSON())
+
+    return HttpResponse(json.dumps(result))
 
 def inventory(request, page=1):
     """List items from inventory."""
