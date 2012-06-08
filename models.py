@@ -67,6 +67,7 @@ def update_label(code, field, value):
     if attr_value == value: return False
 
     setattr(label, field, value)
+    label.save()
 
     items = Item.objects.filter(code=code)
     update = False

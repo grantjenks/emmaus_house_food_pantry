@@ -4,7 +4,7 @@ from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.core.paginator import Paginator, EmptyPage
 from django.core.paginator import InvalidPage, PageNotAnInteger
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 
 from datetime import datetime
 import json
@@ -104,14 +104,26 @@ def item_update(request):
 
     if field == 'acquire_date':
         value = datetime.strptime(value, '%b %d, %Y').date()
+
     num = int(num)
-    item = Item.objects.get(pk=num)
+    item = get_object_or_404(Item, pk=num)
     setattr(item, field, value)
+
+    if field == 'code':
+        try:
+            label = Label.objects.get(code=value)
+            item.name = label.name
+            item.category = label.category
+            item.subcategory = label.subcategory
+        except Label.DoesNotExist:
+            Label.objects.create(name=item.name, code=value,
+                                 category=item.category,
+                                 subcategory=item.subcategory)
+
     item.save()
 
     code = item.code
-    if code is not None and (field == 'name' or field == 'category'
-                             or field == 'subcategory'):
+    if code is not None and field in ('name', 'category', 'subcategory'):
         update = update_label(code, field, value)
     else:
         update = False

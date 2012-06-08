@@ -33,12 +33,12 @@ input { width:100%; }
   <tbody>
     {% for item in items_page.object_list %}
       <tr>
-        <td id="{{ item.id }}-code" >{{ item.code }}</td>
-        <td id="{{ item.id }}-name">{{ item.name }}</td>
-        <td id="{{ item.id }}-donor">{{ item.donor }}</td>
-        <td id="{{ item.id }}-acquire_date">{{ item.acquire_date }}</td>
-        <td id="{{ item.id }}-category">{{ item.category }}</td>
-        <td id="{{ item.id }}-subcategory">{{ item.subcategory }}</td>
+        <td id="item-{{ item.id }}-code" class="code quickedit">{{ item.code }}</td>
+        <td id="item-{{ item.id }}-name" class="name quickedit">{{ item.name }}</td>
+        <td id="item-{{ item.id }}-donor" class="quickedit">{{ item.donor }}</td>
+        <td id="item-{{ item.id }}-acquire_date" class="quickedit">{{ item.acquire_date }}</td>
+        <td id="item-{{ item.id }}-category" class="category quickedit">{{ item.category }}</td>
+        <td id="item-{{ item.id }}-subcategory" class="subcategory quickedit">{{ item.subcategory }}</td>
       </tr>
     {% endfor %}
   </tbody>
@@ -47,49 +47,5 @@ input { width:100%; }
 
 {% block script %}
 <script type="text/javascript" src="/static/jquery-1.7.2.js"></script>
-
-<script type="text/javascript">
-function td_click() {
-  $(this).unbind();
-  $(this).wrapInner("<input type='text' name='"+$(this).attr("rel")+"' value='"+$(this).html()+"'></input>");
-  $(this).bind("keypress", td_enter);
-}
-function td_enter(obj) {
-  if (obj.which == 13) {
-    $(this).unbind();
-    td = $(this);
-    id = $(this).attr("id");
-    parts = id.split("-");
-    val = $(this).children().val();
-    $.ajax({
-      url: "/inventory/update",
-      data: { num: parts[0], field: parts[1], value: val },
-      dataType: "json",
-      type: "POST",
-      async: false,
-      cache: false,
-      statusCode: {
-        400: function() {
-          alert("Error: Bad input.");
-          td.bind("keypress", td_enter);
-        },
-        200: function(data) {
-          if (data["update"]) {
-            // iterate all the items on this page and update
-          }
-          td.text(val);
-          td.bind("click", td_click);
-        }
-      },
-      error: function() {
-        alert("Unknown Error.");
-        td.bind("keypress", td_enter);
-      }
-    });
-  }
-}
-$(document).ready(function() {
-  $("td").click(td_click);
-});
-</script>
+<script type="text/javascript" src="/static/pantry.js"></script>
 {% endblock %}
