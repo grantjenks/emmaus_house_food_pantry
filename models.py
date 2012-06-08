@@ -14,7 +14,8 @@ class Item(db.models.Model):
     def __repr__(self):
         return self.name
     def jsonDate(self, date):
-        return date if date is None else date.strftime('%b %d, %Y')
+        if date is None: return None
+        else: return date.strftime('%b {}, %Y').format(date.day)
     def toJSON(self):
         acquire_date = self.jsonDate(self.acquire_date)
         release_date = self.jsonDate(self.release_date)

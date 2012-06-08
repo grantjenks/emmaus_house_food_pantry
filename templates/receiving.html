@@ -5,11 +5,11 @@
 table { width:100%; }
 th { width:14%; }
 input { width:100%; }
-.step_2 { display: none; }
-.step_3 { display: none; }
-.step_4 { display: none; }
-.step_5 { display: none; }
-.step_6 { display: none; }
+.rec-step-2 { display: none; }
+.rec-step-3 { display: none; }
+.rec-step-4 { display: none; }
+.rec-step-5 { display: none; }
+.rec-step-6 { display: none; }
 ol { height: 270px; }
 </style>
 {% endblock %}
@@ -19,15 +19,15 @@ ol { height: 270px; }
 
 <p>Steps</p>
 <ol>
-  <li class="step_1">Enter Donor Name and Press Enter:<input id="item-donor" type="text" value=""></input></li>
-  <li class="step_2">Enter Date Received and Press Enter:<input id="item-acquire_date" type="text" value=""></input></li>
-  <li class="step_3">Scan an Item:<input id="item-code" type="text" value=""></input></li>
-  <li class="step_4">Enter Item Name and Press Enter:<input id="item-name" type="text" value=""></input></li>
-  <li class="step_5">Enter Item Category and Press Enter:<input id="item-category" type="text" value=""></input></li>
-  <li class="step_6">Enter Item Subcategory and Press Enter:<input id="item-subcategory" type="text" value=""></input></li>
+  <li class="rec-step-1">Enter Donor Name and Press Enter:<input id="item-donor" type="text" value=""></input></li>
+  <li class="rec-step-2">Enter Date Received and Press Enter:<input id="item-acquire_date" type="text" value=""></input></li>
+  <li class="rec-step-3">Scan an Item:<input id="item-code" type="text" value=""></input></li>
+  <li class="rec-step-4">Enter Item Name and Press Enter:<input id="item-name" type="text" value=""></input></li>
+  <li class="rec-step-5">Enter Item Category and Press Enter:<input id="item-category" type="text" value=""></input></li>
+  <li class="rec-step-6">Enter Item Subcategory and Press Enter:<input id="item-subcategory" type="text" value=""></input></li>
 </ol>
-<a id="create-receipt" class="step_3" href="{% url views.receipt %}">Create Receipt</a>
-<table class="step_3" border="1" cellspacing="1" cellpadding="5">
+<a id="create-receipt" class="rec-step-3" href="{% url views.receipt %}">Create Receipt</a>
+<table class="rec-step-3" border="1" cellspacing="1" cellpadding="5">
   <thead>
     <tr>
       <th>Code</th>
@@ -65,212 +65,17 @@ ol { height: 270px; }
 
 {% block script %}
 <script type="text/javascript" src="/static/jquery-1.7.2.js"></script>
-
+<script type="text/javascript" src="/static/pantry.js"></script>
 <script type="text/javascript">
-function get_date_formatted() {
-  date = new Date();
-  month = { 0:"Jan", 1:"Feb", 2:"Mar", 3:"Apr", 4:"May", 5:"Jun", 6:"Jul",
-            7:"Aug", 8:"Sep", 9:"Oct", 10:"Nov", 11:"Dec" }[date.getMonth()];
-  date_format = month + " " + date.getDate() + ", " + date.getFullYear();
-  return date_format;
-}
-function td_click() {
-  $(this).unbind();
-  $(this).wrapInner("<input type='text' value='"+$(this).html()+"'></input>");
-  $(this).bind("keypress", td_enter);
-}
-function new_item() {
-  var item = {
-    code: $("#new-code-in").val(),
-    name: $("#new-name-in").val(),
-    donor: $("#new-donor-in").val(),
-    acquire_date: $("#new-acquire_date-in").val(),
-    category: $("#new-category-in").val(),
-    subcategory: $("#new-subcategory-in").val()
-  };
-  $.ajax({
-    url: "/inventory/new",
-    data: item,
-    type: "POST",
-    async: false,
-    dataType: "json",
-    cache: false,
-    statusCode: {
-      200: function(item) {
-        id = item["num"]
-        var row =  "<tr>"
-          + "<td id=\"" + id + "-code\" class=\"item-" + id + "\">" + item["code"] + "</td>"
-          + "<td id=\"" + id + "-name\" class=\"item-" + id + "\">" + item["name"] + "</td>"
-          + "<td id=\"" + id + "-donor\" class=\"item-" + id + "\">" + item["donor"] + "</td>"
-          + "<td id=\"" + id + "-acquire_date\" class=\"item-" + id + "\">" + item["acquire_date"] + "</td>"
-          + "<td id=\"" + id + "-category\" class=\"item-" + id + "\">" + item["category"] + "</td>"
-          + "<td id=\"" + id + "-subcategory\" class=\"item-" + id + "\">" + item["subcategory"] + "</td>"
-          + "</tr>";
-        $("#new-item-row").after(row);
-        $(".item-" + id).click(td_click);
-        $("#new-code-in").val("");
-        $("#new-name-in").val("");
-        $("#new-category-in").val("");
-        $("#new-subcategory-in").val("");
-        $("#new-code-in").focus();
-      }
-    },
-    error: function(data) {
-      alert(data);
-      alert("Error: " + data["message"]);
-    }
-  });
-}
-function td_enter(obj) {
-  if (obj.which == 13) {
-    td = $(this);
-    td.unbind();
-    var cls = td.attr("class");
-    if (cls.indexOf("new-") == 0) {
-      new_item();
-      td.bind("keypress", td_enter);
-    } else {
-      id = $(this).attr("id");
-      parts = id.split("-");
-      val = $(this).children().val();
-      $.ajax({
-        url: "/inventory/update",
-        data: { num: parts[0], field: parts[1], value: val },
-        type: "POST",
-        async: false,
-        cache: false,
-        statusCode: {
-          400: function() {
-            alert("Error: Bad input.");
-            td.bind("keypress", td_enter);
-          },
-          200: function() {
-            td.text(val);
-            td.bind("click", td_click);
-          }
-        },
-        error: function() {
-          alert("Unknown Error.");
-          td.bind("keypress", td_enter);
-        }
-      });
-    }
-  }
-}
-function step_1(obj) {
-  if (obj.which == 13) {
-    $("#item-acquire_date").val(get_date_formatted());
-    $(".step_2").fadeIn();
-    $("#item-acquire_date").focus();
-  }
-}
-function step_2(obj) {
-  if (obj.which == 13) {
-    $(".step_3").fadeIn();
-    $("#item-code").focus();
-  }
-}
-function step_3(obj) {
-  if (obj.which == 13) {
-    code = $("#item-code").val();
-    $.ajax({
-      url: "/inventory/label",
-      data: { "code": code },
-      type: "GET",
-      async: false,
-      dataType: "json",
-      cache: false,
-      statusCode: {
-        400: function() {
-          alert("Error: Bad input.");
-        },
-        200: function(label) {
-          $("#item-name").val(label["name"]);
-          $("#item-category").val(label["category"]);
-          $("#item-subcategory").val(label["subcategory"]);
-
-          if (label["name"] != ""
-              && label["category"] != ""
-              && label["subcategory"] != "") {
-            step_6_helper();
-          } else {
-            $(".step_4").fadeIn();
-            $("#item-name").focus();
-
-            if (label["name"] != "") {
-              $(".step_5").fadeIn();
-              $("#item-category").focus();
-            }
-
-            if (label["category"] != "") {
-              $(".step_6").fadeIn();
-              $("#item-subcategory").focus();
-            }
-          }
-        }
-      },
-      error: function(data) {
-        alert("Unknown Error.");
-      }
-    });
-  }
-}
-function step_4(obj) {
-  if (obj.which == 13) {
-    $(".step_5").fadeIn();
-    $("#item-category").focus();
-  }
-}
-function step_5(obj) {
-  if (obj.which == 13) {
-    $(".step_6").fadeIn();
-    $("#item-subcategory").focus();
-  }
-}
-function step_6_helper() {
-  $("#new-donor-in").val($("#item-donor").val());
-  $("#new-acquire_date-in").val($("#item-acquire_date").val());
-  $("#new-code-in").val($("#item-code").val());
-  $("#new-name-in").val($("#item-name").val());
-  $("#new-category-in").val($("#item-category").val());
-  $("#new-subcategory-in").val($("#item-subcategory").val());
-
-  new_item();
-
-  // TODO: Error handling?
-
-  $("#new-donor-in").val("");
-  $("#new-acquire_date-in").val("");
-
-  $(".step_6").fadeOut();
-  $("#item-subcategory").val("");
-
-  $(".step_5").fadeOut();
-  $("#item-category").val("");
-
-  $(".step_4").fadeOut();
-  $("#item-name").val("");
-
-  $("#item-code").val("");
-  $("#item-code").focus();
-}
-function step_6(obj) {
-  if (obj.which == 13) {
-    step_6_helper();
-  }
-}
-function create_receipt() {
-  $("#create-receipt").attr("href", "/receipt");
-}
 $(document).ready(function() {
-  $("#item-donor").keypress(step_1);
-  $("#item-acquire_date").keypress(step_2);
-  $("#item-code").keypress(step_3);
-  $("#item-name").keypress(step_4);
-  $("#item-category").keypress(step_5);
-  $("#item-subcategory").keypress(step_6);
-  $(".new-item").keypress(td_enter);
-  $("#create-receipt").click(create_receipt);
+  $("#item-donor").keypress(rec_step_1);
+  $("#item-acquire_date").keypress(rec_step_2);
+  $("#item-code").keypress(rec_step_3);
+  $("#item-name").keypress(rec_step_4);
+  $("#item-category").keypress(rec_step_5);
+  $("#item-subcategory").keypress(rec_step_6);
+  $(".new-item").keypress(rec_new_item_keypress);
+  $("#create-receipt").click(rec_create_receipt);
   $("#item-donor").focus();
 });
 </script>

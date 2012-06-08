@@ -4,7 +4,6 @@
 <style type="text/css">
 table { width:100%; }
 th { width:14%; }
-input { width:100%; }
 </style>
 {% endblock %}
 
@@ -29,7 +28,7 @@ input { width:100%; }
       <td>{{ item.code }}</td>
       <td>{{ item.name }}</td>
       <td>{{ item.donor }}</td>
-      <td>{{ item.acquire_date }}</td>
+      <td>{{ item.acquire_date|date:"M j, Y" }}</td>
       <td>{{ item.category }}</td>
       <td>{{ item.subcategory }}</td>
     </tr>

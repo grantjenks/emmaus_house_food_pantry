@@ -96,13 +96,13 @@ def item_update(request):
     field = request.POST.get("field", None)
     value = request.POST.get("value", None)
 
-    if field not in ('name', 'code', 'donor', 'acquire_date',
+    if field not in ('name', 'code', 'donor', 'acquire_date', 'release_date',
                      'release_date', 'category', 'subcategory'):
         return HttpResponseBadRequest()
 
     if field == 'name' and value == '': return HttpResponseBadRequest()
 
-    if field == 'acquire_date':
+    if field in ('acquire_date', 'release_date'):
         value = datetime.strptime(value, '%b %d, %Y').date()
 
     num = int(num)

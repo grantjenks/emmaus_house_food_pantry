@@ -33,88 +33,12 @@ input { width:100%; }
 
 {% block script %}
 <script type="text/javascript" src="/static/jquery-1.7.2.js"></script>
-
+<script type="text/javascript" src="/static/pantry.js"></script>
 <script type="text/javascript">
-function get_date_formatted() {
-  date = new Date();
-  month = { 0:"Jan", 1:"Feb", 2:"Mar", 3:"Apr", 4:"May", 5:"Jun", 6:"Jul",
-            7:"Aug", 8:"Sep", 9:"Oct", 10:"Nov", 11:"Dec" }[date.getMonth()];
-  date_format = month + " " + date.getDate() + ", " + date.getFullYear();
-  return date_format;
-}
-function item_code(obj) {
-  if (obj.which == 13) {
-    code = $(this).val();
-    date = get_date_formatted();
-    $.ajax({
-      url: "/inventory/release",
-      data: { "code": code },
-      type: "POST",
-      async: false,
-      dataType: "json",
-      cache: false,
-      statusCode: {
-        400: function() {
-          alert("Error: Bad input.");
-        },
-        200: function(item) {
-          var row =  "<tr>"
-            + "<td>" + item["code"] + "</td>"
-            + "<td>" + item["name"] + "</td>"
-            + "<td>" + item["donor"] + "</td>"
-            + "<td>" + item["release_date"] + "</td>"
-            + "<td>" + item["category"] + "</td>"
-            + "<td>" + item["subcategory"] + "</td>"
-            + "</tr>";
-          $("tbody").prepend(row);
-        }
-      },
-      error: function() {
-        alert("Unknown Error.");
-      }
-    });
-    $("#item-code").val("");
-  }
-}
-function td_click() {
-  $(this).unbind();
-  $(this).wrapInner("<input type='text' name='"+$(this).attr("rel")+"' value='"+$(this).html()+"'></input>");
-  $(this).bind("keypress", td_enter);
-}
-function td_enter(obj) {
-  if (obj.which == 13) {
-    $(this).unbind();
-    td = $(this);
-    id = $(this).attr("id");
-    parts = id.split("-");
-    val = $(this).children().val();
-    $.ajax({
-      url: "/inventory/update",
-      data: { num: parts[0], field: parts[1], value: val },
-      type: "POST",
-      async: false,
-      cache: false,
-      statusCode: {
-        400: function() {
-          alert("Error: Bad input.");
-          td.bind("keypress", td_enter);
-        },
-        200: function() {
-          td.text(val);
-          td.bind("click", td_click);
-        }
-      },
-      error: function() {
-        alert("Unknown Error.");
-        td.bind("keypress", td_enter);
-      }
-    });
-  }
-}
 $(document).ready(function() {
-  $("td").click(td_click);
+  $(".quickedit").dblclick(quickedit_dblclick);
   $("#item-code").focus();
-  $("#item-code").keypress(item_code);
+  $("#item-code").keypress(dist_scan_code);
 });
 </script>
 {% endblock %}

@@ -36,7 +36,7 @@ input { width:100%; }
         <td id="item-{{ item.id }}-code" class="code quickedit">{{ item.code }}</td>
         <td id="item-{{ item.id }}-name" class="name quickedit">{{ item.name }}</td>
         <td id="item-{{ item.id }}-donor" class="quickedit">{{ item.donor }}</td>
-        <td id="item-{{ item.id }}-acquire_date" class="quickedit">{{ item.acquire_date }}</td>
+        <td id="item-{{ item.id }}-acquire_date" class="quickedit">{{ item.acquire_date|date:"M j, Y" }}</td>
         <td id="item-{{ item.id }}-category" class="category quickedit">{{ item.category }}</td>
         <td id="item-{{ item.id }}-subcategory" class="subcategory quickedit">{{ item.subcategory }}</td>
       </tr>
@@ -48,4 +48,9 @@ input { width:100%; }
 {% block script %}
 <script type="text/javascript" src="/static/jquery-1.7.2.js"></script>
 <script type="text/javascript" src="/static/pantry.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".quickedit").dblclick(quickedit_dblclick);
+});
+</script>
 {% endblock %}
