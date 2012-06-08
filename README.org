@@ -7,14 +7,10 @@
       - How to url encode text boxes? jQuery?
   - Category and subcategory are drop-down lists
     - Integrate "Chosen" jQuery plug-in
-  - Label editing should update the page
-    - Refactor this mechanism for all pages
-    - Inventory, receiving, (and distribution?)
+    - This will require it's own model
   - Error handling
     - Display message when item added/edited successfully
     - Base.html should have div for error/message
-  - Receipt: items by donor in a year?
   - Inventory:
-    - order by: id desc default
     - allow sort of other categories
-    - paginate with last id?
+  - Receipt: items by donor in a year?

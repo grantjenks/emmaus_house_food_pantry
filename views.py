@@ -135,7 +135,7 @@ def item_update(request):
 def inventory(request, page=1):
     """List items from inventory."""
 
-    items = Item.objects.filter(release_date=None)
+    items = Item.objects.filter(release_date=None).order_by('-id')
     items_paginator = Paginator(items, 20)
 
     try:
