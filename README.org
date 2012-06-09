@@ -1,5 +1,4 @@
 * Todos
-  - Receipt linking on inventory page
   - Category and subcategory are drop-down lists
     - Integrate "Chosen" jQuery plug-in
     - This will require it's own model

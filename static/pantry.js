@@ -260,3 +260,22 @@ function rec_step_6(obj) {
         rec_step_6_helper();
     }
 }
+
+function rcpt_step_1(obj) {
+    if (obj.which == 13) {
+        $("#item-acquire_date").val(get_date_formatted());
+        $(".rcpt-step-2").fadeIn();
+        $("#item-acquire_date").focus();
+    }
+}
+
+function rcpt_step_2(obj) {
+    if (obj.which == 13) {
+        var receipt_url = $("#create-receipt").attr("href");
+        receipt_url += "?donor=" + encodeURIComponent($("#item-donor").val());
+        receipt_url += "&acquire_date=" + encodeURIComponent($("#item-acquire_date").val());
+        $("#create-receipt").attr("href", receipt_url);
+        $(".rcpt-step-3").fadeIn();
+        $("#create-receipt").focus();
+    }
+}

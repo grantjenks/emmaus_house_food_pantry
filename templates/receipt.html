@@ -3,13 +3,17 @@
 {% block style %}
 <style type="text/css">
 table { width:100%; }
-th { width:14%; }
+th { width:50%; }
+input { width:100%; }
+.rcpt-step-2 { display: none; }
+.rcpt-step-3 { display: none; }
 </style>
 {% endblock %}
 
 {% block content %}
 <h2>Receipt</h2>
 
+{% if action == 'display' %}
 <h3>Thank You {{ donor }}</h3>
 
 <p>Thank you for your gifts to Emmaus House on {{ acquire_date|date:"M j, Y" }}.</p>
@@ -32,5 +36,25 @@ th { width:14%; }
     {% endfor %}
   </tbody>
 </table>
+{% else %}
+<p>Steps</p>
+<ol>
+  <li class="rcpt-step-1">Enter Donor Name and Press Enter:<input id="item-donor" type="text" value=""></input></li>
+  <li class="rcpt-step-2">Enter Date Received and Press Enter:<input id="item-acquire_date" type="text" value=""></input></li>
+</ol>
+<a id="create-receipt" class="rcpt-step-3" href="{% url views.receipt %}">Create Receipt</a>
+{% endif %}
 
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript" src="/static/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="/static/pantry.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+  $("#item-donor").keypress(rcpt_step_1);
+  $("#item-acquire_date").keypress(rcpt_step_2);
+  $("#item-donor").focus();
+});
+</script>
 {% endblock %}

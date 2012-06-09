@@ -10,6 +10,9 @@ input { width:100%; }
 
 {% block content %}
 <h2>Inventory</h2>
+
+<a href="{% url views.receipt %}">Create Receipt</a>
+
 <h3>Page {{ items_page.number }}</h3>
 
 {% if items_page.has_previous %}

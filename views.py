@@ -161,7 +161,7 @@ def receipt(request):
 
     if donor is None or acquire_date is None:
         data = {'error': 'Please specify donor and date.'}
-        return render_to_response('receipt.html', data,
+        return render_to_response('receipt.html', { 'action': 'steps' },
                                   context_instance=RequestContext(request))
 
     acquire_date = datetime.strptime(acquire_date, '%b %d, %Y').date()
@@ -174,7 +174,7 @@ def receipt(request):
     # Group by code with quantity.
 
     result = dict(subcategories=subcategories, donor=donor,
-                  acquire_date=acquire_date, total=total)
+                  acquire_date=acquire_date, total=total, action='display')
 
     return render_to_response('receipt.html', result,
                               context_instance=RequestContext(request))
