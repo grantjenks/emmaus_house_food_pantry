@@ -1,10 +1,11 @@
 * Todos
+** v0
   - Category and subcategory are drop-down lists
     - Integrate "Chosen" jQuery plug-in
     - This will require it's own model
   - Error handling
     - Display message when item added/edited successfully
     - Base.html should have div for error/message
-  - Inventory:
-    - allow sort of other categories
-  - Receipt: items by donor in a year?
+** vNext
+  - Inventory: allow sort of other categories
+  - Receipt: items by donor in a year
