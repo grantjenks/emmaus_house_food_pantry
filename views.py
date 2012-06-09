@@ -7,6 +7,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 
 from datetime import datetime
+from collections import Counter
 import json
 
 def lookup_label(request):
@@ -166,8 +167,14 @@ def receipt(request):
     acquire_date = datetime.strptime(acquire_date, '%b %d, %Y').date()
 
     items = Item.objects.filter(donor=donor, acquire_date=acquire_date)
+    subcategories = items.values_list('subcategory', flat=True)
+    total = len(subcategories)
+    subcategories = dict(Counter(subcategories))
 
     # Group by code with quantity.
 
-    return render_to_response('receipt.html', {'items':items},
+    result = dict(subcategories=subcategories, donor=donor,
+                  acquire_date=acquire_date, total=total)
+
+    return render_to_response('receipt.html', result,
                               context_instance=RequestContext(request))

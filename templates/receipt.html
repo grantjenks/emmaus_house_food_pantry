@@ -10,31 +10,27 @@ th { width:14%; }
 {% block content %}
 <h2>Receipt</h2>
 
-{% if items %}
+<h3>Thank You {{ donor }}</h3>
+
+<p>Thank you for your gifts to Emmaus House on {{ acquire_date|date:"M j, Y" }}.</p>
+
+<p>{{ total }} Items Received!</p>
+
 <table border="1" cellspacing="1" cellpadding="5">
   <thead>
     <tr>
-      <th>Code</th>
-      <th>Name</th>
-      <th>Donor</th>
-      <th>Received</th>
-      <th>Category</th>
+      <th>Count</th>
       <th>Subcategory</th>
     </tr>
   </thead>
   <tbody>
-    {% for item in items %}
+    {% for subcategory, count in subcategories.iteritems %}
     <tr>
-      <td>{{ item.code }}</td>
-      <td>{{ item.name }}</td>
-      <td>{{ item.donor }}</td>
-      <td>{{ item.acquire_date|date:"M j, Y" }}</td>
-      <td>{{ item.category }}</td>
-      <td>{{ item.subcategory }}</td>
+      <td>{{ count }}</td>
+      <td>{{ subcategory }}</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
-{% endif %}
 
 {% endblock %}

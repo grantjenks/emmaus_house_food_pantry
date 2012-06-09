@@ -163,6 +163,10 @@ function rec_step_1(obj) {
 function rec_step_2(obj) {
     if (obj.which == 13) {
         $("#new-acquire_date-in").val($("#item-acquire_date").val());
+        var receipt_url = $("#create-receipt").attr("href");
+        receipt_url += "?donor=" + encodeURIComponent($("#item-donor").val());
+        receipt_url += "&acquire_date=" + encodeURIComponent($("#item-acquire_date").val());
+        $("#create-receipt").attr("href", receipt_url);
         $(".rec-step-3").fadeIn();
         $("#item-code").focus();
     }
@@ -255,8 +259,4 @@ function rec_step_6(obj) {
     if (obj.which == 13) {
         rec_step_6_helper();
     }
-}
-
-function rec_create_receipt() {
-    $("#create-receipt").attr("href", "/receipt");
 }

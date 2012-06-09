@@ -1,10 +1,5 @@
 * Todos
-  - Receipt aggregations
-    - Group by subcategory. How to format?
-      - How to do "group by" query in django?
-  - Receipt linking
-    - Link on receiving page and inventory page
-      - How to url encode text boxes? jQuery?
+  - Receipt linking on inventory page
   - Category and subcategory are drop-down lists
     - Integrate "Chosen" jQuery plug-in
     - This will require it's own model
