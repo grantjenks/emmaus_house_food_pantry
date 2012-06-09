@@ -6,6 +6,7 @@
   - Error handling
     - Display message when item added/edited successfully
     - Base.html should have div for error/message
+  - Fix static file linking for admin
 ** vNext
   - Inventory: allow sort of other categories
   - Receipt: items by donor in a year
