@@ -1,8 +1,8 @@
 import views
 import settings
 
-from django.http import HttpResponseRedirect
 from django.conf.urls.defaults import patterns, include, url
+from django.http import HttpResponseRedirect
 
 from django.contrib import admin
 admin.autodiscover()
@@ -18,6 +18,4 @@ urlpatterns = patterns('',
     url(r'^receipt$', views.receipt),
     url(r'^distribution$', views.distribution),
     url(r'^admin/', include(admin.site.urls)),
-    (r'^static/(?P<path>.*)$', 'django.views.static.serve',
-     {'document_root': settings.STATIC_ROOT}),
 )
