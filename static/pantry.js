@@ -52,9 +52,11 @@ function quickedit_enter(obj) {
                 }
                 qe.dblclick(quickedit_dblclick);
             },
-            error: function() {
-                alert("Error.");
+            error: function(jqXHR, textStatus, errorThrown) {
+                data = $.parseJSON(jqXHR.responseText);
+                alert("Error: " + data["error"]);
                 qe.keypress(quickedit_enter);
+                qe.focusout(quickedit_focusout);
             }
         });
     }
@@ -97,8 +99,9 @@ function dist_scan_code(obj) {
                 $("tbody").prepend(row);
                 $("tbody").children().first().find(".quickedit").dblclick(quickedit_dblclick);
             },
-            error: function() {
-                alert("Error.");
+            error: function(jqXHR, textStatus, errorThrown) {
+                data = $.parseJSON(jqXHR.responseText);
+                alert("Error: " + data["error"]);
             }
         });
         $("#item-code").val("");
@@ -145,8 +148,9 @@ function rec_new_item() {
             $("#new-subcategory-in").val("");
             $("#new-code-in").focus();
         },
-        error: function(data) {
-            alert("Error.");
+        error: function(jqXHR, textStatus, errorThrown) {
+            data = $.parseJSON(jqXHR.responseText);
+            alert("Error: " + data["error"]);
         }
     });
 }
@@ -206,8 +210,9 @@ function rec_step_3(obj) {
                     }
                 }
             },
-            error: function(data) {
-                alert("Error.");
+            error: function(jqXHR, textStatus, errorThrown) {
+                data = $.parseJSON(jqXHR.responseText);
+                alert("Error: " + data["error"]);
             }
         });
     }

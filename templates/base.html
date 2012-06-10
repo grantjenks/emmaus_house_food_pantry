@@ -2,10 +2,7 @@
 <html>
 <head>
   <title>Emmaus House Food Pantry</title>
-
-<style type="text/css">
-  body { margin-left: auto; margin-right: auto; max-width: 960px; }
-</style>
+  <link rel="stylesheet" type="text/css" href="/static/pantry.css" />
 {% block style %}{% endblock %}
 </head>
 <body>
@@ -16,6 +13,10 @@
     <li><a href="{% url views.receiving %}">Receiving</a></li>
     <li><a href="{% url views.distribution %}">Distribution</a></li>
   </ul>
+  <div class="info"></div>
+  <div class="success"></div>
+  <div class="warning"></div>
+  <div class="error"></div>
   {% block content %}{% endblock %}
   {% block script %}{% endblock %}
 </body>

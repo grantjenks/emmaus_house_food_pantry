@@ -12,11 +12,16 @@ import json
 
 def lookup_label(request):
     if request.method != 'GET':
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest(
+            json.dumps({'error':'Only GET method supported.'}),
+            content_type='application/javascript; charset=utf8')
 
     code = request.GET.get('code')
 
-    if code is None: return HttpResponseBadRequest()
+    if code is None:
+        return HttpResponseBadRequest(
+            json.dumps({'error':'Missing request parameter: code'}),
+            content_type='application/javascript; charset=utf8')
 
     result = dict(name='', category='', subcategory='')
 
@@ -32,7 +37,9 @@ def lookup_label(request):
 
 def item_new(request):
     if request.method != 'POST':
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest(
+            json.dumps({'error':'Only POST method supported.'}),
+            content_type='application/javascript; charset=utf8')
 
     code = request.POST.get("code")
     name = request.POST.get("name")
@@ -50,13 +57,17 @@ def item_new(request):
             category = label.category
             subcategory = label.subcategory
         except Label.DoesNotExist:
-            if name == '': return HttpResponseBadRequest()
+            if name == '':
+                return HttpResponseBadRequest(
+                    json.dumps({'error':'Name is a required field.'}),
+                    content_type='application/javascript; charset=utf8')
             Label.objects.create(name=name, code=code, category=category,
                                  subcategory=subcategory)
 
     if name == '':
-        result = {'message': 'Please enter a name.'}
-        return HttpResponseBadRequest(json.dumps(result))
+        return HttpResponseBadRequest(
+            json.dumps({'error':'Name is a required field.'}),
+            content_type='application/javascript; charset=utf8')
 
     if acquire_date:
         acquire_date = datetime.strptime(acquire_date, '%b %d, %Y').date()
@@ -72,12 +83,16 @@ def item_new(request):
 
 def item_release(request):
     if request.method != 'POST':
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest(
+            json.dumps({'error':'Only POST method supported.'}),
+            content_type='application/javascript; charset=utf8')
 
     code = request.POST.get("code", None)
 
     if code is None:
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest(
+            json.dumps({'error':'Missing request parameter: code'}),
+            content_type='application/javascript; charset=utf8')
 
     try:
         item = Item.objects.filter(code=code, release_date=None)[:1][0]
@@ -86,12 +101,15 @@ def item_release(request):
         item.save()
         return HttpResponse(json.dumps(item.toJSON()))
     except Exception as ex:
-        print ex
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest(
+            json.dumps({'error':str(ex)}),
+            content_type='application/javascript; charset=utf8')
 
 def item_update(request):
     if request.method != 'POST':
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest(
+            json.dumps({'error':'Only POST method supported.'}),
+            content_type='application/javascript; charset=utf8')
 
     num = request.POST.get("num", None)
     field = request.POST.get("field", None)
@@ -99,9 +117,14 @@ def item_update(request):
 
     if field not in ('name', 'code', 'donor', 'acquire_date', 'release_date',
                      'release_date', 'category', 'subcategory'):
-        return HttpResponseBadRequest()
+        return HttpResponseBadRequest(
+            json.dumps({'error':'Field not recognized.'}),
+            content_type='application/javascript; charset=utf8')
 
-    if field == 'name' and value == '': return HttpResponseBadRequest()
+    if field == 'name' and value == '':
+        return HttpResponseBadRequest(
+            json.dumps({'error':'Name is a required field.'}),
+            content_type='application/javascript; charset=utf8')
 
     if field in ('acquire_date', 'release_date'):
         value = datetime.strptime(value, '%b %d, %Y').date()
