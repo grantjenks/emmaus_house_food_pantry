@@ -3,7 +3,8 @@
 {% block style %}
 <style type="text/css">
 table { width:100%; }
-th { width:14%; }
+td { cursor: pointer; }
+.trash { text-align: center; }
 input { width:100%; }
 </style>
 {% endblock %}
@@ -31,6 +32,7 @@ input { width:100%; }
       <th>Received</th>
       <th>Category</th>
       <th>Subcategory</th>
+      <th>X</th>
     </tr>
   </thead>
   <tbody>
@@ -42,6 +44,7 @@ input { width:100%; }
         <td id="item-{{ item.id }}-acquire_date" class="quickedit">{{ item.acquire_date|date:"M j, Y" }}</td>
         <td id="item-{{ item.id }}-category" class="category quickedit">{{ item.category }}</td>
         <td id="item-{{ item.id }}-subcategory" class="subcategory quickedit">{{ item.subcategory }}</td>
+        <td id="item-{{ item.id }}" class="trash">X</td>
       </tr>
     {% endfor %}
   </tbody>
@@ -54,6 +57,7 @@ input { width:100%; }
 <script type="text/javascript">
 $(document).ready(function() {
     $(".quickedit").dblclick(quickedit_dblclick);
+    $(".trash").dblclick(trash_dblclick);
 });
 </script>
 {% endblock %}

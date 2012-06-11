@@ -156,6 +156,26 @@ def item_update(request):
 
     return HttpResponse(json.dumps(result))
 
+def item_delete(request):
+    if request.method != 'POST':
+        return HttpResponseBadRequest(
+            json.dumps({'error':'Only POST method supported.'}),
+            content_type='application/javascript; charset=utf8')
+
+    num = request.POST.get("num", None)
+    num = int(num)
+
+    try:
+        item = Item.objects.get(pk=num)
+    except Item.DoesNotExist:
+        return HttpResponseBadRequest(
+            json.dumps({'error':'Item not found.'}),
+            content_type='application/javascript; charset=utf8')
+
+    item.delete()
+
+    return HttpResponse()
+
 def inventory(request, page=1):
     """List items from inventory."""
 

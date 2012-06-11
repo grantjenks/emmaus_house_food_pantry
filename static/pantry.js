@@ -284,3 +284,29 @@ function rcpt_step_2(obj) {
         $("#create-receipt").focus();
     }
 }
+
+function trash_dblclick() {
+    var col = $(this);
+    var row = col.parent();
+    var ans = confirm("Are you sure you want to delete this item?");
+    var parts = col.attr("id").split("-");
+    if (ans) {
+        $.ajax({
+            url: "/inventory/delete",
+            data: { num: parts[1] },
+            dataType: "json",
+            type: "POST",
+            async: false,
+            cache: false,
+            success: function(data) {
+                row.remove();
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                var data = $.parseJSON(jqXHR.responseText);
+                alert("Error: " + data["error"]);
+            }
+        });
+    } else {
+
+    }
+}
