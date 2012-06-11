@@ -3,7 +3,6 @@
   - Category and subcategory are drop-down lists
     - Integrate "Chosen" jQuery plug-in
     - This will require it's own model
-  - Ability to delete inventory
 ** vNext
   - Inventory: allow sort of other categories
   - Receipt: items by donor in a year
