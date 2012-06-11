@@ -81,3 +81,26 @@ def update_label(code, field, value):
             update = True
 
     return update
+
+class Category(db.models.Model):
+    name = db.models.CharField(max_length=256)
+    def __str__(self):
+        return self.name
+    def __repr__(self):
+        return self.name
+    class Meta:
+        app_label = 'food_pantry'
+        ordering = ['name']
+        verbose_name_plural = "categories"
+
+class Subcategory(db.models.Model):
+    name = db.models.CharField(max_length=256)
+    category = db.models.ForeignKey(Category)
+    def __str__(self):
+        return self.name
+    def __repr__(self):
+        return self.name
+    class Meta:
+        app_label = 'food_pantry'
+        ordering = ['name']
+        verbose_name_plural = "subcategories"

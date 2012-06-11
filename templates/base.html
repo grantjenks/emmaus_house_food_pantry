@@ -17,7 +17,20 @@
   <div class="success"></div>
   <div class="warning"></div>
   <div class="error"></div>
-  {% block content %}{% endblock %}
-  {% block script %}{% endblock %}
+{% block content %}{% endblock %}
+{% block script %}{% endblock %}
+<script type="text/javascript">
+var categories =
+[{% for category in categories %}
+   "{{ category.name|escapejs }}"{% if forloop.last %}{% else %},{% endif %}{% endfor %}
+];
+var subcategories =
+{{% for category, subcategories in subcategories.iteritems %}
+   "{{ category|escapejs }}":
+       [{% for subcategory in subcategories %}
+           "{{ subcategory.name|escapejs }}"{% if forloop.last %}{% else %},{% endif %}{% endfor %}
+       ]{% if forloop.last %}{% else %},{% endif %}{% endfor %}
+};
+</script>
 </body>
 </html>
