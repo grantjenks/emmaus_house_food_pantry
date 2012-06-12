@@ -3,14 +3,14 @@
 {% block style %}
 <style type="text/css">
 table { width:100%; }
-th { width:14%; }
 input { width:100%; }
+select { width:100%; }
 .rec-step-2 { display: none; }
 .rec-step-3 { display: none; }
 .rec-step-4 { display: none; }
 .rec-step-5 { display: none; }
 .rec-step-6 { display: none; }
-ol { height: 270px; }
+ol { height: 285px; }
 </style>
 {% endblock %}
 
@@ -23,8 +23,8 @@ ol { height: 270px; }
   <li class="rec-step-2">Enter Date Received and Press Enter:<input id="item-acquire_date" type="text" value=""></input></li>
   <li class="rec-step-3">Scan an Item:<input id="item-code" type="text" value=""></input></li>
   <li class="rec-step-4">Enter Item Name and Press Enter:<input id="item-name" type="text" value=""></input></li>
-  <li class="rec-step-5">Enter Item Category and Press Enter:<input id="item-category" type="text" value=""></input></li>
-  <li class="rec-step-6">Enter Item Subcategory and Press Enter:<input id="item-subcategory" type="text" value=""></input></li>
+  <li class="rec-step-5">Select Item Category and Press Enter:<select id="item-category" name="item-category-select"></select></li>
+  <li class="rec-step-6">Select Item Subcategory and Press Enter:<select id="item-subcategory" name="item-subcategory-select"></select></li>
 </ol>
 <a id="create-receipt" class="rec-step-3" href="{% url views.receipt %}">Create Receipt</a>
 <table class="rec-step-3" border="1" cellspacing="1" cellpadding="5">

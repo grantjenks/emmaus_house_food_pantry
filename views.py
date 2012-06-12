@@ -70,7 +70,12 @@ def item_new(request):
             content_type='application/javascript; charset=utf8')
 
     if acquire_date:
-        acquire_date = datetime.strptime(acquire_date, '%b %d, %Y').date()
+        try:
+            acquire_date = datetime.strptime(acquire_date, '%b %d, %Y').date()
+        except ValueError:
+            return HttpResponseBadRequest(
+                json.dumps({'error':'Failed to parse date.'}),
+                content_type='application/javascript; charset=utf8')
     else:
         acquire_date = None
 

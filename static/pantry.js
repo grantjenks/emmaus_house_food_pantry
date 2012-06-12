@@ -1,3 +1,19 @@
+function category_options() {
+    var options = "";
+    _.each(categories, function (category) {
+        options += "<option value='"+category+"'>"+category+"</option>";
+    });
+    return options;
+}
+
+function subcategory_options(category) {
+    var options = "";
+    _.each(subcategories[category], function (subcategory) {
+        options += "<option value='"+subcategory+"'>"+subcategory+"</option>";
+    });
+    return options;
+}
+
 function quickedit_dblclick() {
     qe = $(this);
     qe.unbind();
@@ -5,18 +21,14 @@ function quickedit_dblclick() {
     qe.data("original_value", value);
     if (qe.hasClass("category")) {
         var select_el = "<select name='category_select'>";
-        _.each(categories, function (category) {
-            select_el += "<option value='"+category+"'>"+category+"</option>";
-        });
+        select_el += category_options();
         select_el += "</select>";
         qe.html(select_el);
     } else if (qe.hasClass("subcategory")) {
         parent = qe.parent();
         category = parent.find(".category").text();
         var select_el = "<select name='subcategory_select'>";
-        _.each(subcategories[category], function (subcategory) {
-            select_el += "<option value='"+subcategory+"'>"+subcategory+"</option>";
-        });
+        select_el += subcategory_options(category);
         select_el += "</select>";
         qe.html(select_el);
     } else {
@@ -248,6 +260,7 @@ function rec_step_3(obj) {
 
 function rec_step_4(obj) {
     if (obj.which == 13) {
+        $("#item-category").html(category_options());
         $(".rec-step-5").fadeIn();
         $("#item-category").focus();
     }
@@ -255,6 +268,8 @@ function rec_step_4(obj) {
 
 function rec_step_5(obj) {
     if (obj.which == 13) {
+        var category = $("#item-category").val();
+        $("#item-subcategory").html(subcategory_options(category));
         $(".rec-step-6").fadeIn();
         $("#item-subcategory").focus();
     }
@@ -271,9 +286,6 @@ function rec_step_6_helper() {
     rec_new_item();
 
     // TODO: Error handling?
-
-    // $("#new-donor-in").val("");
-    // $("#new-acquire_date-in").val("");
 
     $(".rec-step-6").fadeOut();
     $("#item-subcategory").val("");
