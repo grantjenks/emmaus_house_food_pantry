@@ -132,7 +132,12 @@ def item_update(request):
             content_type='application/javascript; charset=utf8')
 
     if field in ('acquire_date', 'release_date'):
-        value = datetime.strptime(value, '%b %d, %Y').date()
+        try:
+            value = datetime.strptime(value, '%b %d, %Y').date()
+        except ValueError:
+            return HttpResponseBadRequest(
+                json.dumps({'error':'Failed to parse date.'}),
+                content_type='application/javascript; charset=utf8')
 
     num = int(num)
     item = get_object_or_404(Item, pk=num)
@@ -214,7 +219,13 @@ def receipt(request):
         return render_to_response('receipt.html', { 'action': 'steps' },
                                   context_instance=RequestContext(request))
 
-    acquire_date = datetime.strptime(acquire_date, '%b %d, %Y').date()
+    try:
+        acquire_date = datetime.strptime(acquire_date, '%b %d, %Y').date()
+    except ValueError:
+        return render_to_response('receipt.html',
+                                  {'action':'steps',
+                                   'error':'Error: Failed to parse date.'},
+                                  context_instance=RequestContext(request))
 
     items = Item.objects.filter(donor=donor, acquire_date=acquire_date)
     subcategories = items.values_list('subcategory', flat=True)

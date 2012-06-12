@@ -16,7 +16,7 @@
   <div class="info"></div>
   <div class="success"></div>
   <div class="warning"></div>
-  <div class="error"></div>
+  {% if error %}<div class="error">{{ error }}</div>{% endif %}
 
 {% block content %}{% endblock %}
 
