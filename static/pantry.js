@@ -3,7 +3,25 @@ function quickedit_dblclick() {
     qe.unbind();
     value = qe.text();
     qe.data("original_value", value);
-    qe.wrapInner("<input type='text' value='"+value+"'></input>");
+    if (qe.hasClass("category")) {
+        var select_el = "<select name='category_select'>";
+        _.each(categories, function (category) {
+            select_el += "<option value='"+category+"'>"+category+"</option>";
+        });
+        select_el += "</select>";
+        qe.html(select_el);
+    } else if (qe.hasClass("subcategory")) {
+        parent = qe.parent();
+        category = parent.find(".category").text();
+        var select_el = "<select name='subcategory_select'>";
+        _.each(subcategories[category], function (subcategory) {
+            select_el += "<option value='"+subcategory+"'>"+subcategory+"</option>";
+        });
+        select_el += "</select>";
+        qe.html(select_el);
+    } else {
+        qe.wrapInner("<input type='text' value='"+value+"'></input>");
+    }
     qe.keypress(quickedit_enter);
     qe.focusout(quickedit_focusout);
     qe.children().focus();

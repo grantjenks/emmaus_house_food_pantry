@@ -1,8 +1,10 @@
 * Todos
 ** v1
-  - Category and subcategory are drop-down lists
-    - Integrate "Chosen" jQuery plug-in
-    - This will require it's own model
+   - Category and subcategory are drop-down lists
+     - When you change the category, you should also change the subcategory
+       to blank and a pop-up should ask you to update the subcategory.
+     - Fix receiving
 ** vNext
-  - Inventory: allow sort of other categories
-  - Receipt: items by donor in a year
+   - Category: integrate "Chosen" jQuery plug-in
+   - Inventory: allow sort of other categories
+   - Receipt: items by donor in a year
