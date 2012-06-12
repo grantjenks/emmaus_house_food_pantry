@@ -1,8 +1,7 @@
 * Todos
-** v1
-   - Category and subcategory are drop-down lists
-     - Fix receiving
 ** vNext
-   - Category: integrate "Chosen" jQuery plug-in
+   - Inventory: Dashboard
+   - Dates should use calendar selector
+   - Category/subcateogry should use "Chosen" jQuery plug-in
    - Inventory: allow sort of other categories
    - Receipt: items by donor in a year
