@@ -64,6 +64,16 @@ function quickedit_enter(obj) {
                                 parent.find("."+parts[2]).text(val);
                             }
                         });
+                        if (parts[2] == "category") {
+                            $(".code").each(function (idx, code_el) {
+                                if ($(code_el).text() == code) {
+                                    id = $(code_el).attr("id");
+                                    var parent = $("#"+id).parent();
+                                    parent.find(".subcategory").text("");
+                                }
+                            });
+                            alert("Remember to also update the subcategory.");
+                        }
                     } else {
                         qe.text(val);
                     }

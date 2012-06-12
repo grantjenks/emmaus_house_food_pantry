@@ -149,6 +149,8 @@ def item_update(request):
     code = item.code
     if code is not None and field in ('name', 'category', 'subcategory'):
         update = update_label(code, field, value)
+        if field == 'category':
+            update |= update_label(code, 'subcategory', '')
     else:
         update = False
 
@@ -216,7 +218,7 @@ def receipt(request):
 
     # Group by code with quantity.
 
-    result = dict(subcategories=subcategories, donor=donor,
+    result = dict(groups=subcategories, donor=donor,
                   acquire_date=acquire_date, total=total, action='display')
 
     return render_to_response('receipt.html', result,
