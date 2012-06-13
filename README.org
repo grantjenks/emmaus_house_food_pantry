@@ -5,3 +5,12 @@
    - Category/subcateogry should use "Chosen" jQuery plug-in
    - Inventory: allow sort of other categories
    - Receipt: items by donor in a year
+* Competition
+  - I was curious one morning and did some research on food pantry management competitor systems. See links below for details. Charge a $100 one-time fee or $8.95 per-month would under-cut most of the competition. The other solutions have many more features but I don't think it would be hard to implement them.
+** Competitors
+   - http://www.waspbarcode.com/inventory_control/inventory_control.asp
+   - http://webpages.charter.net/bobalston/nonprofit_food_pantry.htm
+   - http://www.foodpantrysolutions.com/buy-now.php
+   - http://www.foodpantrymanager.org/Food-Pantry-Software-Pricing
+   - http://www.cedarmountainsoftware.com/Food_Pantry_Intake
+   - http://www.foodbankmanager.com/
