@@ -6,16 +6,10 @@
    - Inventory: allow sort of other categories
    - Receipt: items by donor in a year
 * Deployment
-  - Replace hardcoded value in serve.py for sys.path
-  - Replace hardcoded value in settings.py for database
-  - Change debug setting to False
-  - Static file serving in cherrypy?
-    - Prefixes: /app for django views and /static for files?
-    - Special WSGI handler to LoadResource from exe?
-  - CherryPy or gevent?
-  - Launch Chrome if available or fallback to IE
-  - http://stackoverflow.com/questions/1939883/py2exe-embed-static-files-in-exe-file-itself-and-access-them
-  - http://docs.activestate.com/activepython/2.5/pywin32/win32api__LoadResource_meth.html
+  - Django plays a lot of games with importlib.import_module, I don't see how
+    a standalone exe could be created. I think the food_pantry dir needs to
+    be zipped and embedded in the exe. Then the exe will unpack the zip file
+    and launch itself.
 * Competition
   - I was curious one morning and did some research on food pantry management competitor systems. See links below for details. Charge a $100 one-time fee or $8.95 per-month would under-cut most of the competition. The other solutions have many more features but I don't think it would be hard to implement them.
 ** Competitors
