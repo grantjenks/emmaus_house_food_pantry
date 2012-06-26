@@ -1,9 +1,13 @@
 # Django settings for food_pantry project.
 
 import os
+from appdirs import AppDirs
+
 def relative_path_to(*args):
     abs_dir_path = os.path.abspath(os.path.dirname(__file__))
     return os.path.join(abs_dir_path, *args)
+
+DIRS = AppDirs('FoodPantry', 'GrantJenks', version='1.0')
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -14,10 +18,14 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+DB_FILE_NAME = 'pantry.db'
+DB_FILE_DIR = DIRS.user_data_dir
+DB_FILE_PATH = os.path.join(DB_FILE_DIR, DB_FILE_NAME)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': relative_path_to('pantry.db'),
+        'NAME': DB_FILE_PATH,
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
