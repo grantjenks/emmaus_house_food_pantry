@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import shutil
 import appdirs
 import tempfile
@@ -7,10 +8,13 @@ import settings
 import subprocess
 
 from zipfile import ZipFile
+from threading import Thread
 from StringIO import StringIO
 from cherrypy import wsgiserver
 from win32api import LoadResource
 from django.core.handlers.wsgi import WSGIHandler
+
+print 'Starting server ...'
 
 # Create the food pantry directory to which we'll unpack.
 
@@ -39,17 +43,23 @@ else:
 os.environ['DJANGO_SETTINGS_MODULE'] = 'food_pantry.settings'
 sys.path.append(temp_dir)
 
+def start_chrome():
+    time.sleep(1)
+    chrome_dir = appdirs.user_data_dir('Chrome', 'Google')
+    subprocess.call([os.path.join(chrome_dir, 'Application', 'chrome.exe'),
+                     '--app=http://localhost:8080'])
+
 # Run the server.
 
 server = wsgiserver.CherryPyWSGIServer(('0.0.0.0', 8080), WSGIHandler())
 try:
+    thread = Thread(target=start_chrome)
+    thread.start()
+    print 'Press CTRL-c to stop the server.'
     server.start()
 except KeyboardInterrupt:
     server.stop()
-
-chrome_dir = appdirs.user_data_dir('Chrome', 'Google')
-subprocess.call([os.path.join(chrome_dir, 'Application', 'chrome.exe'),
-                 '--app=http://localhost:8080'])
+    thread.join()
 
 # Delete the temporary directory.
 
