@@ -7,6 +7,7 @@ def relative_path_to(*args):
     abs_dir_path = os.path.abspath(os.path.dirname(__file__))
     return os.path.join(abs_dir_path, *args)
 
+VERSION = 'Food Pantry v1.0'
 DIRS = AppDirs('FoodPantry', 'GrantJenks', version='1.0')
 
 DEBUG = False

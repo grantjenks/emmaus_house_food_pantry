@@ -1,3 +1,4 @@
+import settings
 from models import Item, Label, update_label
 
 from django.http import Http404, HttpResponse, HttpResponseBadRequest
@@ -9,6 +10,10 @@ from django.shortcuts import render_to_response, get_object_or_404
 from datetime import datetime
 from collections import Counter
 import json
+
+def version(request):
+    return HttpResponse(settings.VERSION,
+                        content_type='text/plain; charset=utf8')
 
 def lookup_label(request):
     if request.method != 'GET':
