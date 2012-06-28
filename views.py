@@ -1,4 +1,3 @@
-import settings
 from models import Item, Label, update_label
 
 from django.http import Http404, HttpResponse, HttpResponseBadRequest
@@ -10,10 +9,6 @@ from django.shortcuts import render_to_response, get_object_or_404
 from datetime import datetime
 from collections import Counter
 import json
-
-def version(request):
-    return HttpResponse(settings.VERSION,
-                        content_type='text/plain; charset=utf8')
 
 def lookup_label(request):
     if request.method != 'GET':
@@ -244,3 +239,20 @@ def receipt(request):
 
     return render_to_response('receipt.html', result,
                               context_instance=RequestContext(request))
+
+def version(request):
+    import settings
+    return HttpResponse(settings.VERSION,
+                        content_type='text/plain; charset=utf8')
+
+def shutdown(request):
+    def call_exit():
+        import os
+        import time
+        time.sleep(1)
+        os._exit(0)
+    from threading import Thread
+    thread = Thread(target=call_exit)
+    thread.start()
+    return HttpResponse('Terminating server process ...',
+                        content_type='text/plain; charset=utf8')
