@@ -1,10 +1,39 @@
+html {
+    height:100%;
+}
 body {
+    margin: 0;
     margin-left: auto;
     margin-right: auto;
     max-width: 960px;
-    font-family: Arial, Helvetica, sans-serif;n
+    font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
-    line-height:150%
+    line-height:150%;
+    height:100%;
+    padding: 0;
+}
+#wrap {
+  padding: 0;
+  margin: 0;
+  min-height: 99%;
+}
+#main {
+  overflow:auto;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 50px;  /* must be >= the height of the footer */
+}
+#footer {
+  border-width: 0;
+  border-top-width: 1px;
+  border-style: solid;
+  border-color: #BBBBBB;
+  text-align: center;
+  font-size: smaller;
+  position: relative;
+  margin-top: -40px; /* negative value of footer height */
+  height: 40px;
+  clear:both;
 }
 .info, .success, .warning, .error, .validation {
     border: 1px solid;

@@ -6,6 +6,8 @@
 {% block style %}{% endblock %}
 </head>
 <body>
+<div id="wrap">
+  <div id="main">
   <h1>Emmaus House Food Pantry</h1>
   <p>Navigation</p>
   <ul>
@@ -19,6 +21,12 @@
   {% if error %}<div class="error">{{ error }}</div>{% endif %}
 
 {% block content %}{% endblock %}
+
+  </div>
+</div>
+<div id="footer">
+  <p>Copyright 2012 by <a href="http://www.grantjenks.com">Grant Jenks</a>. All rights reserved.  &bull;  <a href="{% url admin:index %}">Admin</a>  &bull;  <a href="{% url views.shutdown %}">Shutdown</a>
+</div>
 
 <script type="text/javascript" src="/static/underscore-1.3.3.js"></script>
 <script type="text/javascript" src="/static/jquery-1.7.2.js"></script>
