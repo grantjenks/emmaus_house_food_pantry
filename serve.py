@@ -48,8 +48,9 @@ def install_pantry_db(food_pantry_dir):
 
 def start_chrome():
     chrome_dir = appdirs.user_data_dir('Chrome', 'Google')
-    subprocess.call([os.path.join(chrome_dir, 'Application', 'chrome.exe'),
-                     '--app=http://localhost:8080'])
+    chrome_exe = os.path.join(chrome_dir, 'Application', 'chrome.exe')
+    subprocess.call(['start', chrome_exe, '--app=http://localhost:8080'],
+                    shell=True)
 
 def start_server(temp_dir):
     os.environ['DJANGO_SETTINGS_MODULE'] = 'food_pantry.settings'
