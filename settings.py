@@ -8,10 +8,11 @@ def relative_path_to(*args):
     return os.path.join(abs_dir_path, *args)
 
 VERSION = 'Food Pantry v1.0'
-DIRS = AppDirs('FoodPantry', 'GrantJenks', version='1.0')
+APPDIRS = AppDirs('FoodPantry', 'GrantJenks', version='1.0')
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
+STANDALONE = True
 
 ADMINS = (
     ('Grant Jenks', 'contact@grantjenks.com'),
@@ -20,8 +21,11 @@ ADMINS = (
 MANAGERS = ADMINS
 
 DB_FILE_NAME = 'pantry.db'
-DB_FILE_DIR = DIRS.user_data_dir
-DB_FILE_PATH = os.path.join(DB_FILE_DIR, DB_FILE_NAME)
+DB_FILE_DIR = APPDIRS.user_data_dir
+if STANDALONE:
+    DB_FILE_PATH = os.path.join(DB_FILE_DIR, DB_FILE_NAME)
+else:
+    DB_FILE_PATH = DB_FILE_NAME
 
 DATABASES = {
     'default': {

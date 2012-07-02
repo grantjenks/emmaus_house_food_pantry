@@ -1,33 +1,24 @@
 import os
-import sys
-import time
-import shutil
-import urllib
-import appdirs
-import argparse
-import tempfile
 import settings
-import subprocess
-
-from zipfile import ZipFile
-from multiprocessing import freeze_support, Process
-from StringIO import StringIO
-from cherrypy import wsgiserver
-from win32api import LoadResource
-from django.core.handlers.wsgi import WSGIHandler
+import argparse
 
 parser = argparse.ArgumentParser(description='Emmaus House Food Pantry')
 parser.add_argument('-p', '--package', help='Package file with app.')
 
 def create_pantry_dir():
-    """Create the food pantry directory to which we'll unpack."""
-    temp_dir = tempfile.mkdtemp(prefix='tmp_', suffix='_food_pantry')
+    """Create an empty food pantry directory to which we'll unpack."""
+    import shutil
+    temp_dir = os.path.join(settings.APPDIRS.user_cache_dir, 'modules')
     food_pantry_dir = os.path.join(temp_dir, 'food_pantry')
-    os.mkdir(food_pantry_dir)
+    if os.path.exists(temp_dir): shutil.rmtree(temp_dir)
+    os.makedirs(food_pantry_dir)
     return (temp_dir, food_pantry_dir)
 
 def unpack_pantry_data(food_pantry_dir):
     """Unpack the food pantry files to the temporary directory."""
+    from StringIO import StringIO
+    from win32api import LoadResource
+    from zipfile import ZipFile
     if args.package:
         food_pantry_zip = ZipFile(args.package)
     else:
@@ -47,42 +38,51 @@ def install_pantry_db(food_pantry_dir):
         os.rename(temp_db_file, settings.DB_FILE_PATH)
 
 def start_chrome():
+    import appdirs
+    import subprocess
     chrome_dir = appdirs.user_data_dir('Chrome', 'Google')
     chrome_exe = os.path.join(chrome_dir, 'Application', 'chrome.exe')
-    subprocess.call(['start', chrome_exe, '--app=http://localhost:8080'],
+    subprocess.call(['start', chrome_exe, '--app=http://localhost:514143'],
                     shell=True)
 
 def start_server(temp_dir):
+    import sys
+    from cherrypy import wsgiserver
+    from django.core.handlers.wsgi import WSGIHandler
     os.environ['DJANGO_SETTINGS_MODULE'] = 'food_pantry.settings'
     sys.path.append(temp_dir)
-    server = wsgiserver.CherryPyWSGIServer(('0.0.0.0', 8080), WSGIHandler())
+    server = wsgiserver.CherryPyWSGIServer(('0.0.0.0', 514143), WSGIHandler())
     try:
         # Beware: If you start the server from the command line then it will
         # catch the CTRL-c command.
         server.start()
     except KeyboardInterrupt:
         server.stop()
-    delete_temp_dir(temp_dir)
-
-def delete_temp_dir(temp_dir):
-    """Delete the temporary directory."""
-    shutil.rmtree(temp_dir)
 
 if __name__ == '__main__':
+    import time
+    import urllib
+    from multiprocessing import freeze_support, Process
     freeze_support()
     args = parser.parse_args()
 
-    # Try to connect to the server and verify the version. If it fails to
-    # connect, start it. If the version info is wrong, signal an error.
+    # If we can connect to the server and verify the version, then just
+    # start Chrome. Otherwise, unpack and start the server.
+
+    do_start_server = False
 
     try:
-        version_page = urllib.urlopen('http://localhost:8080/version')
+        version_page = urllib.urlopen('http://localhost:514143/version')
         version = version_page.read()
         if version != settings.VERSION:
-            # Signal some kind of error. If the version of the server is
-            # old we should probably kill and restart the server.
-            pass
-    except IOError as ioe:
+            shutdown_page = urllib.urlopen('http://localhost:514143/shutdown')
+            shutdown_msg = shutdown_page.read()
+            time.sleep(3)
+            do_start_server = True
+    except IOError:
+        do_start_server = True
+
+    if do_start_server:
         temp_dir, food_pantry_dir = create_pantry_dir()
         unpack_pantry_data(food_pantry_dir)
         install_pantry_db(food_pantry_dir)
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     # stdio buffers, etc. This implements a poor-man's fork(). We use the
     # multiprocessing module to launch the server and then exit the
     # parent process.
-    os._exit(0)
+    if do_start_server: os._exit(0)
 else:
     class DummyArgs:
         def __getattr__(self, field):
