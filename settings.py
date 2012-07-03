@@ -141,20 +141,33 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # the site admins on every HTTP 500 error.
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
+
+if STANDALONE:
+    LOGPATH = os.path.join(APPDIRS.user_log_dir, 'django.log')
+else:
+    LOGPATH = 'django.log'
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)s\t%(asctime)s\t%(message)s'
+        },
+    },
     'handlers': {
-        'mail_admins': {
+        'file': {
             'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler'
+            'class': 'logging.FileHandler',
+            'filename': LOGPATH,
+            'formatter': 'simple'
         }
     },
     'loggers': {
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['file'],
             'level': 'ERROR',
-            'propagate': True,
+            'propagate': True
         },
     }
 }
