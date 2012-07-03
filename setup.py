@@ -56,7 +56,7 @@ def build():
                 'win32', 'win32com']
 
     sys.argv[1:] = ['py2exe']
-    setup(windows=[{'script': 'serve.py',
+    setup(windows=[{'script': 'webapp.py',
                     'other_resources':
                         [(u'FOOD_PANTRY_DATA', 1, food_pantry_data)]}],
           options = {'py2exe': {'bundle_files': 1,
