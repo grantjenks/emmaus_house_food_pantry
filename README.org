@@ -1,21 +1,21 @@
-* Todos
-** vNext
-   - Inventory: Dashboard
-   - Dates should use calendar selector
-   - Category/subcateogry should use "Chosen" jQuery plug-in
-   - Inventory: allow sort of other categories
-   - Receipt: items by donor in a year
-* Deployment
-  - Django plays a lot of games with importlib.import_module, I don't see how
-    a standalone exe could be created. I think the food_pantry dir needs to
-    be zipped and embedded in the exe. Then the exe will unpack the zip file
-    and launch itself.
-* Competition
-  - I was curious one morning and did some research on food pantry management competitor systems. See links below for details. Charge a $100 one-time fee or $8.95 per-month would under-cut most of the competition. The other solutions have many more features but I don't think it would be hard to implement them.
-** Competitors
-   - http://www.waspbarcode.com/inventory_control/inventory_control.asp
-   - http://webpages.charter.net/bobalston/nonprofit_food_pantry.htm
-   - http://www.foodpantrysolutions.com/buy-now.php
-   - http://www.foodpantrymanager.org/Food-Pantry-Software-Pricing
-   - http://www.cedarmountainsoftware.com/Food_Pantry_Intake
-   - http://www.foodbankmanager.com/
+* Emmaus House Food Pantry Inventory Management
+Food Pantry inventory management program for Emmaus House Episcopal Church.
+
+Designed for use with modern USB barcode scanners.
+* Installation
+Simply download the program to your desktop and double-click.
+
+* Development
+** Building
+    python setup.py --help
+    usage: setup.py [-h] [-c] [-p] [-b]
+    
+    Emmaus House Food Pantry Setup
+    
+    optional arguments:
+      -h, --help   show this help message and exit
+      -c, --clean  Clean all built files.
+      -p, --pack   Pack app files into archive.
+      -b, --build  Build executable.
+** Webapp Testing
+    python webapp.py --package food_pantry.zip
