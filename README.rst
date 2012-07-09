@@ -10,6 +10,8 @@ Installation
 
 Simply download the program to your desktop and double-click.
 
+`Click here <https://github.com/downloads/grantjenks/emmaus_house_food_pantry/pantry.exe>`_ to download the latest version of the program.
+
 Development
 -----------
 
