@@ -12,7 +12,7 @@ APPDIRS = AppDirs('FoodPantry', 'GrantJenks', version='1.0')
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
-STANDALONE = True
+STANDALONE = False
 
 ADMINS = (
     ('Grant Jenks', 'contact@grantjenks.com'),
@@ -117,7 +117,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'food_pantry.urls'
+ROOT_URLCONF = 'emmaus_house_food_pantry.urls'
 
 TEMPLATE_DIRS = (
     relative_path_to('templates'),
@@ -131,7 +131,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'food_pantry',
+    'emmaus_house_food_pantry',
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -179,5 +179,5 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
     'django.contrib.messages.context_processors.messages',
-    'food_pantry.context_processors.categories',
+    'emmaus_house_food_pantry.context_processors.categories',
 )
