@@ -210,6 +210,10 @@ def distribution(request):
     return render_to_response('distribution.html', {},
                               context_instance=RequestContext(request))
 
+def history(request):
+    return render_to_response('history.html', {},
+                              context_instance=RequestContext(request))
+
 def receipt(request):
     donor = request.GET.get('donor')
     acquire_date = request.GET.get('acquire_date')
