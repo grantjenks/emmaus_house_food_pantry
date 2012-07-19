@@ -236,6 +236,10 @@ function rec_step_3(obj) {
                     && label["subcategory"] != "") {
                     rec_step_6_helper();
                 } else {
+                    var beep = document.getElementById("beep");
+                    beep.src = "/static/beep.wav";
+                    beep.play();
+
                     $(".rec-step-4").fadeIn();
                     $("#item-name").focus();
 
