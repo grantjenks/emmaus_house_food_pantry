@@ -8,7 +8,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^$', lambda req: HttpResponseRedirect('/inventory/1')),
+    (r'^$', lambda req: HttpResponseRedirect('/dashboard')),
+    url(r'^dashboard$', views.dashboard),
     url(r'^inventory/(?P<page>\d+)$', views.inventory),
     url(r'^inventory/update$', views.item_update),
     url(r'^inventory/new$', views.item_new),

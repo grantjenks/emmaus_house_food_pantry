@@ -189,6 +189,20 @@ def item_delete(request):
 
     return HttpResponse()
 
+def dashboard(request):
+    items = Item.objects.filter(release_date=None)
+
+    categories = items.values('category').annotate(Count('id'))
+    categories = categories.order_by('category')
+
+    subcategories = items.values('subcategory').annotate(Count('id'))
+    subcategories = subcategories.order_by('subcategory')
+
+    return render_to_response('dashboard.html',
+                              {'categories':categories,
+                               'subcategories':subcategories},
+                              context_instance=RequestContext(request))
+
 def inventory(request, page=1):
     """List items from inventory."""
 
