@@ -260,9 +260,9 @@ def receipt(request):
                                   context_instance=RequestContext(request))
 
     items = Item.objects.filter(donor=donor, acquire_date=acquire_date)
-    subcategories = items.values_list('subcategory', flat=True)
-    total = len(subcategories)
-    subcategories = dict(Counter(subcategories))
+    subcategories = items.values('subcategory').annotate(Count('id'))
+    subcategories = subcategories.order_by('subcategory')
+    total = sum(subcategory['id__count'] for subcategory in subcategories)
 
     # Group by code with quantity.
 

@@ -28,10 +28,10 @@ input { width:98%; }
     </tr>
   </thead>
   <tbody>
-    {% for subcategory, count in groups.iteritems %}
+    {% for subcategory in groups %}
     <tr>
-      <td>{{ count }}</td>
-      <td>{{ subcategory }}</td>
+      <td>{{ subcategory.id__count }}</td>
+      <td>{{ subcategory.subcategory }}</td>
     </tr>
     {% endfor %}
   </tbody>
