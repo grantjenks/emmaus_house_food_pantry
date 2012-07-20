@@ -1,5 +1,6 @@
 from models import Item, Label, update_label
 
+from django.db.models import Count
 from django.http import Http404, HttpResponse, HttpResponseBadRequest
 from django.core.paginator import Paginator, EmptyPage
 from django.core.paginator import InvalidPage, PageNotAnInteger
@@ -211,7 +212,34 @@ def distribution(request):
                               context_instance=RequestContext(request))
 
 def history(request):
-    return render_to_response('history.html', {},
+    donor = request.GET.get('donor')
+    try:
+        year = int(request.GET.get('year'))
+    except (ValueError, TypeError):
+        year = None
+
+    donations = Item.objects.values('donor', 'acquire_date')
+    if donor is not None: donations = donations.filter(donor=donor)
+    if year is not None: donations = donations.filter(acquire_date__year=year)
+    donations = donations.annotate(Count('id'))
+    donations = donations.order_by('-acquire_date')
+
+    donors = set()
+    years = set()
+
+    for donation in donations:
+        donors.add(donation['donor'])
+        years.add(donation['acquire_date'].year)
+
+    donors = sorted(donors)
+    years = sorted(years)
+
+    return render_to_response('history.html',
+                              {'donations':donations,
+                               'curr_donor':donor,
+                               'curr_year':year,
+                               'donors':donors,
+                               'years':years},
                               context_instance=RequestContext(request))
 
 def receipt(request):
