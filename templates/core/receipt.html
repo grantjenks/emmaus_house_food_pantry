@@ -42,7 +42,7 @@ input { width:98%; }
   <li class="rcpt-step-1">Enter Donor Name and Press Enter:<input id="item-donor" type="text" value=""></input></li>
   <li class="rcpt-step-2">Enter Date Received and Press Enter:<input id="item-acquire_date" type="text" value=""></input></li>
 </ol>
-<a id="create-receipt" class="rcpt-step-3" href="{% url views.receipt %}">Create Receipt</a>
+<a id="create-receipt" class="rcpt-step-3" href="{% url core.views.receipt %}">Create Receipt</a>
 {% endif %}
 
 {% endblock %}

@@ -198,7 +198,7 @@ def dashboard(request):
     subcategories = items.values('subcategory').annotate(Count('id'))
     subcategories = subcategories.order_by('subcategory')
 
-    return render_to_response('dashboard.html',
+    return render_to_response('core/dashboard.html',
                               {'categories':categories,
                                'subcategories':subcategories},
                               context_instance=RequestContext(request))
@@ -214,15 +214,15 @@ def inventory(request, page=1):
     except (PageNotAnInteger, EmptyPage, InvalidPage):
         raise Http404
 
-    return render_to_response('inventory.html', {'items_page':items_page},
+    return render_to_response('core/inventory.html', {'items_page':items_page},
                               context_instance=RequestContext(request))
 
 def receiving(request):
-    return render_to_response('receiving.html', {},
+    return render_to_response('core/receiving.html', {},
                               context_instance=RequestContext(request))
 
 def distribution(request):
-    return render_to_response('distribution.html', {},
+    return render_to_response('core/distribution.html', {},
                               context_instance=RequestContext(request))
 
 def history(request):
@@ -248,7 +248,7 @@ def history(request):
     donors = sorted(donors)
     years = sorted(years)
 
-    return render_to_response('history.html',
+    return render_to_response('core/history.html',
                               {'donations':donations,
                                'curr_donor':donor,
                                'curr_year':year,
@@ -262,13 +262,13 @@ def receipt(request):
 
     if donor is None or acquire_date is None:
         data = {'error': 'Please specify donor and date.'}
-        return render_to_response('receipt.html', { 'action': 'steps' },
+        return render_to_response('core/receipt.html', { 'action': 'steps' },
                                   context_instance=RequestContext(request))
 
     try:
         acquire_date = datetime.strptime(acquire_date, '%b %d, %Y').date()
     except ValueError:
-        return render_to_response('receipt.html',
+        return render_to_response('core/receipt.html',
                                   {'action':'steps',
                                    'error':'Error: Failed to parse date.'},
                                   context_instance=RequestContext(request))
@@ -283,7 +283,7 @@ def receipt(request):
     result = dict(groups=subcategories, donor=donor,
                   acquire_date=acquire_date, total=total, action='display')
 
-    return render_to_response('receipt.html', result,
+    return render_to_response('core/receipt.html', result,
                               context_instance=RequestContext(request))
 
 def version(request):

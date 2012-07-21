@@ -52,7 +52,7 @@ function quickedit_enter(obj) {
         parts = qe.attr("id").split("-");
         val = qe.children().val();
         $.ajax({
-            url: "/inventory/update",
+            url: "/pantry/inventory/update",
             data: { num: parts[1], field: parts[2], value: val },
             dataType: "json",
             type: "POST",
@@ -127,7 +127,7 @@ function dist_scan_code(obj) {
         code = $(this).val();
         date = get_date_formatted();
         $.ajax({
-            url: "/inventory/release",
+            url: "/pantry/inventory/release",
             data: { "code": code },
             type: "POST",
             async: false,
@@ -164,7 +164,7 @@ function rec_new_item() {
         subcategory: $("#new-subcategory-in").val()
     };
     $.ajax({
-        url: "/inventory/new",
+        url: "/pantry/inventory/new",
         data: item,
         type: "POST",
         async: false,
@@ -220,7 +220,7 @@ function rec_step_3(obj) {
     if (obj.which == 13) {
         code = $("#item-code").val();
         $.ajax({
-            url: "/inventory/label",
+            url: "/pantry/inventory/label",
             data: { "code": code },
             type: "GET",
             async: false,
@@ -336,7 +336,7 @@ function trash_dblclick() {
     var parts = col.attr("id").split("-");
     if (ans) {
         $.ajax({
-            url: "/inventory/delete",
+            url: "/pantry/inventory/delete",
             data: { num: parts[1] },
             dataType: "json",
             type: "POST",

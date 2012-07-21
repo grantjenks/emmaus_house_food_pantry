@@ -131,7 +131,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'emmaus_house_food_pantry',
+    'core',
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -179,5 +179,5 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
     'django.contrib.messages.context_processors.messages',
-    'emmaus_house_food_pantry.context_processors.categories',
+    'core.context_processors.categories',
 )

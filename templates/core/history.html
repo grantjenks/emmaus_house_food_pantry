@@ -36,7 +36,7 @@ th { width:33%; }
       <tr>
         <td>{{ donation.acquire_date }}</td>
         <td>{{ donation.donor }}</td>
-        <td>{{ donation.id__count }} <a href="{% url views.receipt %}?donor={{ donation.donor|urlencode }}&acquire_date={{ donation.acquire_date|date:"M j, Y"|urlencode:"" }}">Receipt</a></td>
+        <td>{{ donation.id__count }} <a href="{% url core.views.receipt %}?donor={{ donation.donor|urlencode }}&acquire_date={{ donation.acquire_date|date:"M j, Y"|urlencode:"" }}">Receipt</a></td>
       </tr>
     {% endfor %}
   </tbody>
@@ -46,7 +46,7 @@ th { width:33%; }
 {% block script %}
 <script type="text/javascript">
 function history_url() {
-  var url = '{% url views.history %}';
+  var url = '{% url core.views.history %}';
 
   var params = [];
 
