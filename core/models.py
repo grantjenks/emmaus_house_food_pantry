@@ -25,9 +25,6 @@ class Item(db.models.Model):
                     release_date=release_date,
                     category=self.category, subcategory=self.subcategory)
 
-    class Meta:
-        app_label = 'food_pantry'
-
 class Label(db.models.Model):
     name = db.models.CharField(max_length=256)
     code = db.models.CharField(unique=True, max_length=256)
@@ -54,9 +51,6 @@ class Label(db.models.Model):
         return '{0} {1}'.format(self.code, self.name)
     def __repr__(self):
         return '{0} {1}'.format(self.code, self.name)
-
-    class Meta:
-        app_label = 'food_pantry'
 
 def update_label(code, field, value):
     if field not in ('name', 'category', 'subcategory'):
@@ -89,7 +83,6 @@ class Category(db.models.Model):
     def __repr__(self):
         return self.name
     class Meta:
-        app_label = 'food_pantry'
         ordering = ['name']
         verbose_name_plural = "categories"
 
@@ -101,6 +94,5 @@ class Subcategory(db.models.Model):
     def __repr__(self):
         return self.name
     class Meta:
-        app_label = 'food_pantry'
         ordering = ['name']
         verbose_name_plural = "subcategories"
