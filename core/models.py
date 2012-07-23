@@ -96,3 +96,23 @@ class Subcategory(db.models.Model):
     class Meta:
         ordering = ['name']
         verbose_name_plural = "subcategories"
+
+class BagCount(db.models.Model):
+    category = db.models.ForeignKey(Category, unique=True)
+    count = db.models.IntegerField()
+    def __str__(self):
+        return '{}: {}'.format(self.category, self.count)
+    def __repr__(self):
+        return '{}: {}'.format(self.category, self.count)
+    class Meta:
+        ordering = ['category']
+
+class Setting(db.models.Model):
+    key = db.models.CharField(max_length=64, unique=True)
+    value = db.models.CharField(max_length=512, blank=True, null=True)
+    def __str__(self):
+        return '{}: {}'.format(self.key, self.value)
+    def __repr__(self):
+        return '{}: {}'.format(self.key, self.value)
+    class Meta:
+        ordering = ['key']
