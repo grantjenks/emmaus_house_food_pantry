@@ -37,29 +37,6 @@ def install_pantry_db(food_pantry_dir):
     """Install the db file if it isn't already there."""
     if not os.path.exists(settings.DB_FILE_DIR):
         os.makedirs(settings.DB_FILE_DIR)
-
-    """
-    Need to add logic to handle migrations. Current scenarios:
-    1. Upgrade from 1.0 to 1.1
-       - Alter table
-       - Add new tables
-       - Populate new tables
-    2. Fresh install of 1.1
-       - Copy pantry.db
-         - pantry.db should be updated with initial data (e.g. core_label)
-
-    def alter_table_1p0_1p1():
-        from django.db import connection
-        cursor = connection.cursor()
-
-        renames = [('food_pantry_category', 'core_category'),
-                   ('food_pantry_item', 'core_item'),
-                   ('food_pantry_label', 'core_label'),
-                   ('food_pantry_subcategory', 'core_subcategory')]
-        for rename in renames:
-            cursor.execute('alter table {} rename to {}'.format(*rename))
-    """
-
     temp_db_file = os.path.join(food_pantry_dir, settings.DB_FILE_NAME)
     if os.path.exists(settings.DB_FILE_PATH):
         log.info('Database already installed; deleting unpacked file')

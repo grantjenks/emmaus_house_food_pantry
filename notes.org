@@ -1,0 +1,24 @@
+* Today
+  - Bag and Setting tables
+    - Load with data
+  - Improve dashboard
+  - Write migration/install utilities
+* Need to add logic to handle migrations. Current scenarios:
+  1. Upgrade from 1.0 to 1.1
+     - Alter table
+     - Add new tables
+     - Populate new tables
+  2. Fresh install of 1.1
+     - Copy pantry.db
+       - pantry.db should be updated with initial data (e.g. core_label)
+     - OR >> always ship blank database and include logic to pre-populate it
+  def alter_table_1p0_1p1():
+      from django.db import connection
+      cursor = connection.cursor()
+
+      renames = [('food_pantry_category', 'core_category'),
+                 ('food_pantry_item', 'core_item'),
+                 ('food_pantry_label', 'core_label'),
+                 ('food_pantry_subcategory', 'core_subcategory')]
+      for rename in renames:
+          cursor.execute('alter table {} rename to {}'.format(*rename))
