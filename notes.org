@@ -1,8 +1,6 @@
 * Today
-  - Bag and Setting tables
-    - Load with data
-  - Improve dashboard
   - Write migration/install utilities
+    - Include pre-loaded data
 * Need to add logic to handle migrations. Current scenarios:
   1. Upgrade from 1.0 to 1.1
      - Alter table
@@ -12,6 +10,10 @@
      - Copy pantry.db
        - pantry.db should be updated with initial data (e.g. core_label)
      - OR >> always ship blank database and include logic to pre-populate it
+       - Then we could add this to setup.py:
+         del pantry.db
+         python manage.py syncdb
+         So that we always shipped a blank database.
   def alter_table_1p0_1p1():
       from django.db import connection
       cursor = connection.cursor()
