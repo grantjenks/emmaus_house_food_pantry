@@ -3,14 +3,32 @@
 <head>
   <title>Emmaus House Food Pantry</title>
   <link rel="stylesheet" type="text/css" href="/static/pantry.css" />
+<style type="text/css">
+body {
+    font-family: Verdana, Arial, Sans-Serif;
+}
+#navbar {
+    width: 100%;
+    float: left;
+    margin-top: 0;
+    padding: 0;
+    list-style: none;
+}
+#navbar li {
+    float: left;
+}
+#navbar li a {
+    padding: 8px 15px;
+    font-size: 18px;
+}
+</style>
 {% block style %}{% endblock %}
 </head>
 <body>
 <div id="wrap">
   <div id="main">
   <h1>Emmaus House Food Pantry</h1>
-  <p>Navigation</p>
-  <ul>
+  <ul id="navbar">
     <li><a href="{% url core.views.dashboard %}">Dashboard</a></li>
     <li><a href="{% url core.views.inventory 1 %}">Inventory</a></li>
     <li><a href="{% url core.views.receiving %}">Receiving</a></li>
