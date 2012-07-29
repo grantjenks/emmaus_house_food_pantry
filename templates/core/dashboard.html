@@ -3,42 +3,53 @@
 {% block style %}
 <style type="text/css">
 table { width:100%; }
-th { width:50%; }
+.half { width:50%; }
+.quarter { width:25% }
 </style>
 {% endblock %}
 
 {% block content %}
 <h2>Dashboard</h2>
-<p>Inventory counts by category.</p>
+<h3>Low Inventory</h3>
+<ol>
+  {% for category, count, bags, weeks in watchlist %}
+    <li>{{ category }}</li>
+  {% endfor %}
+</ol>
+<h3>Inventory by Category</h3>
 <table border="1" cellspacing="1" cellpadding="5" style="width:100%;">
   <thead>
     <tr>
-      <th>Count</th>
-      <th>Category</th>
+      <th class="quarter">Category</th>
+      <th class="quarter">Count</th>
+      <th class="quarter">Bags</th>
+      <th class="quarter">Weeks</th>
     </tr>
   </thead>
   <tbody>
-    {% for category in categories %}
+    {% for category, count, bags, weeks in categories %}
       <tr>
-        <td>{{ category.id__count }}</td>
-        <td>{{ category.category }}</td>
+        <td>{{ category }}</td>
+        <td>{{ count }}</td>
+        <td>{{ bags }}</td>
+        <td>{{ weeks }}</td>
       </tr>
     {% endfor %}
   </tbody>
 </table>
-<p>Inventory counts by subcategory.</p>
+<h3>Inventory by Subcategory</h3>
 <table border="1" cellspacing="1" cellpadding="5" style="width:100%;">
   <thead>
     <tr>
-      <th>Count</th>
-      <th>Subcategory</th>
+      <th class="half">Subcategory</th>
+      <th class="half">Count</th>
     </tr>
   </thead>
   <tbody>
     {% for subcategory in subcategories %}
       <tr>
-        <td>{{ subcategory.id__count }}</td>
         <td>{{ subcategory.subcategory }}</td>
+        <td>{{ subcategory.id__count }}</td>
       </tr>
     {% endfor %}
   </tbody>

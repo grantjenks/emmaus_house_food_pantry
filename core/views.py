@@ -1,4 +1,4 @@
-from models import Item, Label, update_label
+from models import Item, Label, update_label, BagCount, Setting
 
 from django.db.models import Count
 from django.http import Http404, HttpResponse, HttpResponseBadRequest
@@ -8,7 +8,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
 
 from datetime import datetime
-from collections import Counter
+from collections import Counter, OrderedDict
 import json
 
 def lookup_label(request):
@@ -192,15 +192,30 @@ def item_delete(request):
 def dashboard(request):
     items = Item.objects.filter(release_date=None)
 
-    categories = items.values('category').annotate(Count('id'))
+    categories = items.values_list('category').annotate(Count('id'))
     categories = categories.order_by('category')
+    bagcounts = OrderedDict((bag.category.name, bag.count)
+                            for bag in BagCount.objects.order_by('category'))
+    bagsperweek = int(Setting.objects.get(key='count/bags/week').value)
+    categories = [(category,
+                   count,
+                   count / bagcounts[category],
+                   count / bagcounts[category] / bagsperweek)
+                  for category, count in categories]
 
     subcategories = items.values('subcategory').annotate(Count('id'))
     subcategories = subcategories.order_by('subcategory')
 
+    low_inventory = int(Setting.objects.get(key='count/low/inventory').value)
+    watchlist = filter(lambda tup: tup[3] <= low_inventory, categories)
+    watchlist.sort(key=lambda tup: tup[2])
+
     return render_to_response('core/dashboard.html',
                               {'categories':categories,
-                               'subcategories':subcategories},
+                               'subcategories':subcategories,
+                               'bagcounts':bagcounts,
+                               'bagsperweek':bagsperweek,
+                               'watchlist':watchlist},
                               context_instance=RequestContext(request))
 
 def inventory(request, page=1):
