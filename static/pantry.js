@@ -140,6 +140,9 @@ function dist_scan_code(obj) {
                 $("tbody").children().first().find(".quickedit").dblclick(quickedit_dblclick);
             },
             error: function(jqXHR, textStatus, errorThrown) {
+                var beep = document.getElementById("beep");
+                beep.src = "/static/beep.wav";
+                beep.play();
                 data = $.parseJSON(jqXHR.responseText);
                 alert("Error: " + data["error"]);
             }

@@ -101,7 +101,12 @@ def item_release(request):
             content_type='application/javascript; charset=utf8')
 
     try:
-        item = Item.objects.filter(code=code, release_date=None)[:1][0]
+        item = Item.objects.filter(code=code, release_date=None)
+        if len(item) == 0:
+            return HttpResponseBadRequest(
+                json.dumps({'error':'Item not found in inventory.'}),
+                content_type='application/javascript; charset=utf8')
+        item = item[:1][0]
         today = datetime.now().date()
         item.release_date = today
         item.save()
