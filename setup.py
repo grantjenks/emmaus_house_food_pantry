@@ -3,6 +3,7 @@ import sys
 import shutil
 import py2exe
 import argparse
+import subprocess
 import compileall
 from distutils.core import setup
 from zipfile import ZipFile
@@ -29,6 +30,14 @@ def clean():
         shutil.rmtree('./dist')
 
 def pack():
+    if os.path.exists('./pantry.db'):
+        print 'Removing previous database: ./pantry.db ...'
+        os.remove('./pantry.db')
+    print 'Creating new database ...'
+    subprocess.check_call('python.exe manage.py syncdb --noinput')
+    print 'Loading data in new database ...'
+    subprocess.check_call('python.exe manage.py loaddata data\\initial_v2.json')
+
     print 'Compiling python files ...'
     compileall.compile_dir('.', force=True)
 

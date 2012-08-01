@@ -1,26 +1,3 @@
-* Today
-  - Write migration/install utilities
-    - Include pre-loaded data
-* Need to add logic to handle migrations. Current scenarios:
-  1. Upgrade from 1.0 to 1.1
-     - Alter table
-     - Add new tables
-     - Populate new tables
-  2. Fresh install of 1.1
-     - Copy pantry.db
-       - pantry.db should be updated with initial data (e.g. core_label)
-     - OR >> always ship blank database and include logic to pre-populate it
-       - Then we could add this to setup.py:
-         del pantry.db
-         python manage.py syncdb
-         So that we always shipped a blank database.
-  def alter_table_1p0_1p1():
-      from django.db import connection
-      cursor = connection.cursor()
-
-      renames = [('food_pantry_category', 'core_category'),
-                 ('food_pantry_item', 'core_item'),
-                 ('food_pantry_label', 'core_label'),
-                 ('food_pantry_subcategory', 'core_subcategory')]
-      for rename in renames:
-          cursor.execute('alter table {} rename to {}'.format(*rename))
+* Notes
+** Checkout v1 Database
+   git checkout 772023b7468801cc5110fb865976225e552648c8 pantry.db

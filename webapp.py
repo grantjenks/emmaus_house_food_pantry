@@ -33,7 +33,7 @@ def unpack_pantry_data(food_pantry_dir):
     log.info('Extracting zip file data to food pantry cache dir')
     food_pantry_zip.extractall(food_pantry_dir)
 
-def install_pantry_db(food_pantry_dir):
+def install_pantry_db(temp_dir, food_pantry_dir):
     """Install the db file if it isn't already there."""
     if not os.path.exists(settings.DB_FILE_DIR):
         os.makedirs(settings.DB_FILE_DIR)
@@ -42,8 +42,59 @@ def install_pantry_db(food_pantry_dir):
         log.info('Database already installed; deleting unpacked file')
         os.remove(temp_db_file)
     else:
-        log.info('Installing database file via rename')
-        os.rename(temp_db_file, settings.DB_FILE_PATH)
+        from appdirs import AppDirs
+        v1_appdirs = AppDirs('FoodPantry', 'GrantJenks', version='1')
+        v1_db_file = os.path.join(v1_appdirs.user_data_dir, 'pantry.db')
+        if os.path.exists(v1_db_file):
+            log.info('Upgrading database from v1 to v2')
+            log.info('Copying database from v1 to v2 directory')
+            shutil.copyfile(v1_db_file, settings.DB_FILE_PATH)
+            migrate_v1_v2(temp_dir, food_pantry_dir)
+        else:
+            log.info('Installing database file via rename')
+            os.rename(temp_db_file, settings.DB_FILE_PATH)
+
+def migrate_v1_v2(temp_dir, food_pantry_dir):
+    import sys
+
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'emmaus_house_food_pantry.settings'
+    sys.path.append(temp_dir)
+
+    from django.db import connection
+
+    # Alter tables for rename.
+
+    cursor = connection.cursor()
+    renames = [('food_pantry_category', 'core_category'),
+               ('food_pantry_item', 'core_item'),
+               ('food_pantry_label', 'core_label'),
+               ('food_pantry_subcategory', 'core_subcategory')]
+    for rename in renames:
+        cursor.execute('alter table {} rename to {}'.format(*rename))
+
+    # Add new tables.
+
+    cursor.execute("""
+        CREATE TABLE "core_bagcount" (
+            "id" integer NOT NULL PRIMARY KEY,
+            "category_id" integer NOT NULL UNIQUE REFERENCES "core_category" ("id"),
+            "count" integer NOT NULL
+        );""")
+    cursor.execute("""
+        CREATE TABLE "core_setting" (
+            "id" integer NOT NULL PRIMARY KEY,
+            "key" varchar(64) NOT NULL UNIQUE,
+            "value" varchar(512)
+        );""")
+
+    cursor.close()
+    connection.close()
+
+    # Load data into new tables.
+
+    from django.core.management import call_command
+
+    call_command('loaddata', 'data/migrate_v1_v2.json', verbosity=0)
 
 def start_chrome():
     """Start Google Chrome web browser."""
@@ -60,7 +111,7 @@ def start_server(temp_dir):
     import sys
     from cherrypy import wsgiserver
     from django.core.handlers.wsgi import WSGIHandler
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'food_pantry.settings'
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'emmaus_house_food_pantry.settings'
     sys.path.append(temp_dir)
     server = wsgiserver.CherryPyWSGIServer(('0.0.0.0', PORT), WSGIHandler())
     try:
@@ -130,7 +181,7 @@ if __name__ == '__main__':
     if do_start_server:
         temp_dir, food_pantry_dir = create_pantry_dir()
         unpack_pantry_data(food_pantry_dir)
-        install_pantry_db(food_pantry_dir)
+        install_pantry_db(temp_dir, food_pantry_dir)
 
         process = Process(target=start_server, args=(temp_dir,))
         process.start()
