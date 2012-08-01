@@ -115,11 +115,24 @@ def start_chrome():
     """Start Google Chrome web browser."""
     import appdirs
     import subprocess
+
+    browsers = []
+
     chrome_dir = appdirs.user_data_dir('Chrome', 'Google')
     chrome_exe = os.path.join(chrome_dir, 'Application', 'chrome.exe')
-    log.info('Starting Google Chrome at {}'.format(chrome_exe))
-    subprocess.call(['start', chrome_exe, '--app={}'.format(BASE_URL)],
-                    shell=True)
+    browsers.append(['start', chrome_exe, '--app={}'.format(BASE_URL)])
+
+    chrome_exe = r'"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"'
+    browsers.append(['start', chrome_exe, '--app={}'.format(BASE_URL)])
+
+    for browser in browsers:
+        if os.path.exists(browser[1].strip('"')):
+            log.info('Launching browser at {}'.format(browser[1]))
+            subprocess.call(browser, shell=True)
+            break
+    else:
+        msg = 'No browser found to launch! Navigate to {}'.format(BASE_URL)
+        log.error(msg)
 
 def start_server(temp_dir, food_pantry_dir):
     """Start CherryPy WSGI webserver."""
