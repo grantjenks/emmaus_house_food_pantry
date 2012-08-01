@@ -12,7 +12,7 @@ APPDIRS = AppDirs('FoodPantry', 'GrantJenks', version='2')
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
-STANDALONE = False
+STANDALONE = True
 
 ADMINS = (
     ('Grant Jenks', 'contact@grantjenks.com'),

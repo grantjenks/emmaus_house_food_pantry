@@ -1,3 +1,10 @@
+* Todo
+  - Allow someone to distribute something missing from Inventory
+    - Display error message with DingDing
+  - Make sure pantry.exe can be opened multiple times
+  - Better error message in case Chrome.exe isn't installed
+    - May be located at:
+      "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
 * Notes
 ** Checkout v1 Database
    git checkout 772023b7468801cc5110fb865976225e552648c8 pantry.db

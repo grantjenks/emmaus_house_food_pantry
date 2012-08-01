@@ -12,7 +12,7 @@ def create_pantry_dir():
     """Create an empty food pantry directory to which we'll unpack."""
     import shutil
     temp_dir = os.path.join(settings.APPDIRS.user_cache_dir, 'modules')
-    food_pantry_dir = os.path.join(temp_dir, 'food_pantry')
+    food_pantry_dir = os.path.join(temp_dir, 'emmaus_house_food_pantry')
     if os.path.exists(temp_dir):
         log.info('Deleting food pantry cache dir')
         shutil.rmtree(temp_dir)
@@ -43,11 +43,12 @@ def install_pantry_db(temp_dir, food_pantry_dir):
         os.remove(temp_db_file)
     else:
         from appdirs import AppDirs
-        v1_appdirs = AppDirs('FoodPantry', 'GrantJenks', version='1')
+        v1_appdirs = AppDirs('FoodPantry', 'GrantJenks', version='1.0')
         v1_db_file = os.path.join(v1_appdirs.user_data_dir, 'pantry.db')
         if os.path.exists(v1_db_file):
             log.info('Upgrading database from v1 to v2')
             log.info('Copying database from v1 to v2 directory')
+            import shutil
             shutil.copyfile(v1_db_file, settings.DB_FILE_PATH)
             migrate_v1_v2(temp_dir, food_pantry_dir)
         else:
@@ -132,7 +133,7 @@ parser.add_argument('-p', '--package', help='Package file with app.')
 # When imported, the NullHandler is used to suppress output.
 
 import logging
-log = logging.getLogger('food_pantry.webapp')
+log = logging.getLogger('emmaus_house_food_pantry.webapp')
 
 # Create the webapp log, data, and cache directories if they don't
 # already exist.
