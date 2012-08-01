@@ -1,4 +1,4 @@
-# Django settings for food_pantry project.
+# Django settings for emmaus_house_food_pantry project.
 
 import os
 from appdirs import AppDirs

@@ -60,6 +60,7 @@ def migrate_v1_v2(temp_dir, food_pantry_dir):
 
     os.environ['DJANGO_SETTINGS_MODULE'] = 'emmaus_house_food_pantry.settings'
     sys.path.append(temp_dir)
+    sys.path.append(food_pantry_dir)
 
     from django.db import connection
 
@@ -92,10 +93,23 @@ def migrate_v1_v2(temp_dir, food_pantry_dir):
     connection.close()
 
     # Load data into new tables.
+    # This is trickier than it should be. Normally, it would look like:
+    #     from django.core.management import call_command
+    #     call_command('loaddata', 'data/migrate_v1_v2.json', verbosity=0)
+    # but that logic assumes the use of __path__ which we don't have when
+    # packaged as a program.
+    # See django/core/management/base.py for details on the code that is
+    # mimicked here.
 
-    from django.core.management import call_command
-
-    call_command('loaddata', 'data/migrate_v1_v2.json', verbosity=0)
+    from django.core.management.commands import loaddata
+    from optparse import NO_DEFAULT
+    command = loaddata.Command()
+    defaults = dict([(opt.dest, opt.default)
+                     for opt in command.option_list
+                     if opt.default is not NO_DEFAULT])
+    defaults.update({'verbosity':'0'})
+    migrate_file = os.path.join(food_pantry_dir, 'data', 'migrate_v1_v2.json')
+    command.execute(migrate_file, **defaults)
 
 def start_chrome():
     """Start Google Chrome web browser."""
@@ -107,13 +121,14 @@ def start_chrome():
     subprocess.call(['start', chrome_exe, '--app={}'.format(BASE_URL)],
                     shell=True)
 
-def start_server(temp_dir):
+def start_server(temp_dir, food_pantry_dir):
     """Start CherryPy WSGI webserver."""
     import sys
     from cherrypy import wsgiserver
     from django.core.handlers.wsgi import WSGIHandler
     os.environ['DJANGO_SETTINGS_MODULE'] = 'emmaus_house_food_pantry.settings'
     sys.path.append(temp_dir)
+    sys.path.append(food_pantry_dir)
     server = wsgiserver.CherryPyWSGIServer(('0.0.0.0', PORT), WSGIHandler())
     try:
         # Beware: If you start the server from the command line then it will
@@ -167,12 +182,13 @@ if __name__ == '__main__':
     do_start_server = False
 
     try:
-        version_page = urllib.urlopen('{}/version'.format(BASE_URL))
+        version_page = urllib.urlopen('{}/pantry/version'.format(BASE_URL))
         version = version_page.read()
         if version != settings.VERSION:
             log.warning('Version mismatch! {} != {}'.format(version,
                                                             settings.VERSION))
-            shutdown_page = urllib.urlopen('{}/shutdown'.format(BASE_URL))
+            shutdown_url = '{}/pantry/shutdown'.format(BASE_URL)
+            shutdown_page = urllib.urlopen(shutdown_url)
             shutdown_msg = shutdown_page.read()
             time.sleep(3)
             do_start_server = True
@@ -184,7 +200,8 @@ if __name__ == '__main__':
         unpack_pantry_data(food_pantry_dir)
         install_pantry_db(temp_dir, food_pantry_dir)
 
-        process = Process(target=start_server, args=(temp_dir,))
+        dirs = (temp_dir, food_pantry_dir)
+        process = Process(target=start_server, args=dirs)
         process.start()
         time.sleep(1)
 
