@@ -122,6 +122,12 @@ function dist_row(item) {
     return "<tr>" + cols + "</tr>";
 }
 
+var beep_message_text = null;
+
+function beep_message() {
+    alert("Error: " + beep_message_text);
+}
+
 function dist_scan_code(obj) {
     if (obj.which == 13) {
         code = $(this).val();
@@ -140,11 +146,11 @@ function dist_scan_code(obj) {
                 $("tbody").children().first().find(".quickedit").dblclick(quickedit_dblclick);
             },
             error: function(jqXHR, textStatus, errorThrown) {
+                data = $.parseJSON(jqXHR.responseText);
+                beep_message_text = data["error"];
                 var beep = document.getElementById("beep");
                 beep.src = "/static/beep.wav";
                 beep.play();
-                data = $.parseJSON(jqXHR.responseText);
-                alert("Error: " + data["error"]);
             }
         });
         $("#item-code").val("");

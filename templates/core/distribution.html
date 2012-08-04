@@ -38,6 +38,8 @@ $(document).ready(function() {
   $(".quickedit").dblclick(quickedit_dblclick);
   $("#item-code").focus();
   $("#item-code").keypress(dist_scan_code);
+  var beep = document.getElementById("beep");
+  beep.addEventListener('ended', beep_message);
 });
 </script>
 {% endblock %}

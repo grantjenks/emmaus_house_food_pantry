@@ -1,5 +1,4 @@
 * Todo
-  - Test distribution / BingBing
   - Test better Chrome exe support and error message
   - Deploy v2
 * Notes
