@@ -1,6 +1,3 @@
-* Todo
-  - Test better Chrome exe support and error message
-  - Deploy v2
 * Notes
 ** Checkout v1 Database
    git checkout 772023b7468801cc5110fb865976225e552648c8 pantry.db
