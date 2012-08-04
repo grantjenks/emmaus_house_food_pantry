@@ -120,14 +120,14 @@ def start_chrome():
 
     chrome_dir = appdirs.user_data_dir('Chrome', 'Google')
     chrome_exe = os.path.join(chrome_dir, 'Application', 'chrome.exe')
-    browsers.append(['start', chrome_exe, '--app={}'.format(BASE_URL)])
+    browsers.append(['start', "", chrome_exe, '--app={}'.format(BASE_URL)])
 
     chrome_exe = r'"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"'
-    browsers.append(['start', chrome_exe, '--app={}'.format(BASE_URL)])
+    browsers.append(['start', "", chrome_exe, '--app={}'.format(BASE_URL)])
 
     for browser in browsers:
-        if os.path.exists(browser[1].strip('"')):
-            log.info('Launching browser at {}'.format(browser[1]))
+        if os.path.exists(browser[2].strip('"')):
+            log.info('Launching browser at {}'.format(browser[2]))
             subprocess.call(browser, shell=True)
             break
     else:
