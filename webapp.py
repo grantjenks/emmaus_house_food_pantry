@@ -188,7 +188,7 @@ if __name__ == '__main__':
     formatter = logging.Formatter('%(asctime)s\t%(levelname)s\t%(message)s')
     handler.setFormatter(formatter)
     log.addHandler(handler)
-    log.setLevel(logging.WARNING)
+    log.setLevel(logging.INFO)
 
     # If we can connect to the server and verify the version, then just
     # start Chrome. Otherwise, unpack and start the server.
