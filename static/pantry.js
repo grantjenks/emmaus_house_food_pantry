@@ -301,10 +301,10 @@ function rec_step_6_helper() {
     // TODO: Error handling?
 
     $(".rec-step-6").fadeOut();
-    $("#item-subcategory").val("");
+    $("#item-subcategory").val([]);
 
     $(".rec-step-5").fadeOut();
-    $("#item-category").val("");
+    $("#item-category").val([]);
 
     $(".rec-step-4").fadeOut();
     $("#item-name").val("");
